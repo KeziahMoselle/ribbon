@@ -1,4 +1,5 @@
 import React from 'react';
+import { BookmarksProvider } from './components/providers/BookmarksProvider';
 import HomeScreen from './components/HomeScreen';
 import SettingsScreen from './components/SettingsScreen';
 import { createAppContainer } from 'react-navigation';
@@ -12,4 +13,14 @@ const TabNavigator = createBottomTabNavigator({
   initialRouteName: 'Home'
 });
 
-export default createAppContainer(TabNavigator);
+const AppContainer = createAppContainer(TabNavigator);
+
+function App () {
+  return (
+    <BookmarksProvider>
+      <AppContainer />
+    </BookmarksProvider>
+  )
+}
+
+export default App;
