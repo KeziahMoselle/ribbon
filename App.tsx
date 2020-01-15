@@ -4,6 +4,7 @@ import HomeScreen from './components/HomeScreen';
 import SettingsScreen from './components/SettingsScreen';
 import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
+import StatusBar from './components/Layout/StatusBar';
 
 
 const TabNavigator = createBottomTabNavigator({
@@ -18,6 +19,8 @@ const AppContainer = createAppContainer(TabNavigator);
 function App () {
   return (
     <BookmarksProvider>
+      <StatusBar />
+
       <AppContainer />
     </BookmarksProvider>
   )
