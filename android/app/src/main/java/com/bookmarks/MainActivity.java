@@ -1,4 +1,4 @@
-package com.bookmarks;
+package com.keziahmoselle.bookmarks;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;

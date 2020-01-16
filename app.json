@@ -3,7 +3,7 @@
   "displayName": "Bookmarks",
   "expo": {
     "name": "bookmarks",
-    "slug": "expo-template-bare",
+    "slug": "bookmarks",
     "privacy": "unlisted",
     "sdkVersion": "36.0.0",
     "version": "1.0.0",
@@ -12,6 +12,10 @@
       "ios",
       "android",
       "web"
-    ]
+    ],
+    "android": {
+      "package": "com.keziahmoselle.bookmarks",
+      "versionCode": 1
+    }
   }
 }

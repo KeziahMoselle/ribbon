@@ -13,7 +13,12 @@ function HomeScreen () {
       )}
       
       { Bookmarks.all.length > 0 &&
-        Bookmarks.all.map(bookmark => <Text>{bookmark}</Text>)
+        Bookmarks.all.map(bookmark => (
+          <Text key={bookmark.id}>
+            {bookmark.title}
+          </Text>
+          )
+        )
       }
     </View>
   )

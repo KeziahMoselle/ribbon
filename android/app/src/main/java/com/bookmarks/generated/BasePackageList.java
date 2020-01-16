@@ -1,4 +1,4 @@
-package com.bookmarks.generated;
+package com.keziahmoselle.bookmarks.generated;
 
 import java.util.Arrays;
 import java.util.List;
