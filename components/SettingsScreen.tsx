@@ -1,27 +1,26 @@
 import React, { useContext } from 'react';
 import { Text, View, Button } from 'react-native';
-import { BookmarksContext } from './providers/BookmarksProvider';
+import useYoutube from './providers/hooks/useYoutube';
 
 function SettingsScreen () {
-  const Bookmarks = useContext(BookmarksContext);
+  const { isYoutubeLoggedIn, Login, Logout } = useYoutube();
+
+  function _handleYoutubeClick() {
+    if (isYoutubeLoggedIn) {
+      Logout();
+    } else {
+      Login();
+    }
+  }
 
   return (
     <View>
       <Text>Settings</Text>
 
       <Button
-        title="Connect Reddit"
-        onPress={() => Bookmarks.addReddit()}
-      />
-
-      <Button
-        title="Connect Twitter"
-        onPress={() => Bookmarks.addTwitter()}
-      />
-
-      <Button
-        title="Connect YouTube"
-        onPress={() => Bookmarks.addYouTube()}
+        title={isYoutubeLoggedIn ? 'Revoke access' : 'Login with YouTube'}
+        onPress={() => _handleYoutubeClick()}
+        color="#FF0000"
       />
     </View>
   )

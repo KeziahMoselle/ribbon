@@ -1,15 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import Store from './utils/Store';
-import GoogleSignIn from './services/GoogleService';
 
 const BookmarksContext = React.createContext({
   all: [],
   reddit: [],
   twitter: [],
-  youtube: [],
-  addReddit: null,
-  addTwitter: null,
-  addYouTube: null
+  youtube: []
 });
 
 function BookmarksProvider (props) {
@@ -42,32 +37,13 @@ function BookmarksProvider (props) {
     ])
   }, [reddit, twitter, youtube])
 
-  
-  function addReddit() {
-
-  }
-
-  function addTwitter() {
-
-  }
-
-  async function addYouTube() {
-    const localState = await Store.getItem('GoogleOAuthKey');
-    if (localState) return alert('Already connected');
-    GoogleSignIn();
-  } 
-
-  
   return (
     <BookmarksContext.Provider
       value={{
         all,
         reddit,
         twitter,
-        youtube,
-        addReddit,
-        addTwitter,
-        addYouTube
+        youtube
       }}
     >
       {props.children}

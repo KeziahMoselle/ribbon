@@ -10,14 +10,18 @@ const CONFIG = {
 const STORAGE_GOOGLE_KEY = 'GoogleOAuthKey';
 
 async function SignIn () {
-  try {
-    const authState = await AppAuth.authAsync(CONFIG);
-    console.log('signInAsync', authState);
-    Store.setItem(STORAGE_GOOGLE_KEY, authState);
-    return authState;
-  } catch (error) {
-    alert(error)
-  }
+  const authState = await AppAuth.authAsync(CONFIG);
+  Store.setItem(STORAGE_GOOGLE_KEY, authState);
+  return authState;
 }
 
-export default SignIn;
+async function getOauth () {
+  const oauth = await Store.getItem(STORAGE_GOOGLE_KEY);
+  return oauth;
+}
+
+async function Disconnect () {
+  return Store.removeItem(STORAGE_GOOGLE_KEY);
+}
+
+export { SignIn, getOauth, Disconnect };
