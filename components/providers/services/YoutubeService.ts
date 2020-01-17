@@ -1,5 +1,5 @@
 import * as AppAuth from 'expo-app-auth';
-import Store from '../utils/Store';
+import { AsyncStorage } from 'react-native';
 
 const CONFIG = {
   issuer: 'https://accounts.google.com',
@@ -7,21 +7,22 @@ const CONFIG = {
   clientId: '665670953347-1hq6a9o53duqgdr1re8kscm9oqqduo8f.apps.googleusercontent.com'
 };
 
-const STORAGE_GOOGLE_KEY = 'GoogleOAuthKey';
+const STORAGE_GOOGLE_KEY = '@Bookmarks:GoogleOAuthKey';
 
 async function SignIn () {
+  // Login with OAuth
   const authState = await AppAuth.authAsync(CONFIG);
-  Store.setItem(STORAGE_GOOGLE_KEY, authState);
-  return authState;
+  // Store the authState for future use
+  await AsyncStorage.setItem(STORAGE_GOOGLE_KEY, JSON.stringify(authState));
 }
 
 async function getOauth () {
-  const oauth = await Store.getItem(STORAGE_GOOGLE_KEY);
-  return oauth;
+  const oauth = await AsyncStorage.getItem(STORAGE_GOOGLE_KEY);
+  return JSON.parse(oauth);
 }
 
 async function Disconnect () {
-  return Store.removeItem(STORAGE_GOOGLE_KEY);
+  await AsyncStorage.removeItem(STORAGE_GOOGLE_KEY);
 }
 
 export { SignIn, getOauth, Disconnect };

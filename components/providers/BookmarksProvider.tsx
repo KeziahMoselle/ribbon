@@ -3,8 +3,7 @@ import React, { useState, useEffect } from 'react';
 const BookmarksContext = React.createContext({
   all: [],
   reddit: [],
-  twitter: [],
-  youtube: []
+  twitter: []
 });
 
 function BookmarksProvider (props) {
@@ -22,28 +21,20 @@ function BookmarksProvider (props) {
       title: 'My bookmark'
     }
   ]);
-  const [youtube, setYoutube] = useState([
-    {
-      id: 2,
-      title: 'My bookmark'
-    }
-  ]);
 
   useEffect(() => {
     setAll([
       ...reddit,
       ...twitter,
-      ...youtube
     ])
-  }, [reddit, twitter, youtube])
+  }, [reddit, twitter])
 
   return (
     <BookmarksContext.Provider
       value={{
         all,
         reddit,
-        twitter,
-        youtube
+        twitter
       }}
     >
       {props.children}
