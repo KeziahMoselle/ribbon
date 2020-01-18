@@ -1,31 +1,21 @@
 import React, { useContext } from 'react';
 import { Text, View, Button } from 'react-native';
-import useYoutube from './providers/hooks/useYoutube';
+import useReddit from './providers/hooks/useReddit';
 
 function SettingsScreen () {
-  const { isYoutubeLoggedIn, Login, Logout } = useYoutube();
+  const { isLoggedIn, Login, Logout } = useReddit();
 
-  function _handleYoutubeClick() {
-    if (isYoutubeLoggedIn) {
+  function _handleRedditClick() {
+    if (isLoggedIn) {
       Logout();
     } else {
       Login();
     }
   }
 
-  function _handleRedditClick() {
-    
-  }
-
   return (
     <View>
       <Text>Settings</Text>
-
-      <Button
-        title={isYoutubeLoggedIn ? 'Revoke YouTube access' : 'Login with YouTube'}
-        onPress={() => _handleYoutubeClick()}
-        color="#FF0000"
-      />
 
       <Button
         title="Login with Reddit"
