@@ -12,13 +12,15 @@ function BookmarksProvider (props) {
   const [reddit, setReddit] = useState([
     {
       id: 0,
-      title: 'My bookmark'
+      title: 'My bookmark',
+      url: 'https://google.com'
     }
   ]);
   const [twitter, setTwitter] = useState([
     {
       id: 1,
-      title: 'My bookmark'
+      title: 'My bookmark',
+      url: 'https://google.com'
     }
   ]);
 

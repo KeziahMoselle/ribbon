@@ -1,5 +1,5 @@
 export default {
   reddit: {
-    clientId: '58jfP9jwCYOPG0gQpLXySItf_70'
+    clientId: '1kKp1KCHXYo16MFK0_Gqbu5QvBU'
   }
 }

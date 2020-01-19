@@ -10,7 +10,8 @@ async function SignIn () {
   try {
     const state = new Date().valueOf().toString();
     const authUrl = getAuthUrl(state);
-
+    console.log(authUrl);
+    
     const result = await AuthSession.startAsync({ authUrl });
 
     if (result.type !== 'success') return alert(`Error: ${JSON.stringify(result)}`);
