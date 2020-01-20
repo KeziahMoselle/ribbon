@@ -6,15 +6,17 @@ import {
   FlatList,
   SafeAreaView
 } from 'react-native';
-import { BookmarksContext } from './providers/BookmarksProvider';
-import Bookmark from './Bookmark';
+import { BookmarksContext } from '../components/providers/BookmarksProvider';
+import Wrapper from '../components/Layout/Wrapper';
+import Title from '../components/Title';
+import Bookmark from '../components/Bookmark';
 
 function HomeScreen() {
   const Bookmarks = useContext(BookmarksContext);
 
   return (
-    <View style={styles.wrapper}>
-      <Text style={styles.title}>Bookmarks</Text>
+    <Wrapper>
+      <Title>Bookmarks</Title>
 
       { Bookmarks.all.length === 0 && (
         <Text>No bookmarks</Text>
@@ -29,21 +31,11 @@ function HomeScreen() {
           keyExtractor={bookmark => String(bookmark.id)}
         />
       </SafeAreaView>
-    </View>
+    </Wrapper>
   )
 }
 
 const styles = StyleSheet.create({
-  title: {
-    fontWeight: 'bold',
-    fontSize: 24,
-    marginTop: 12,
-    marginBottom: 20
-  },
-  wrapper: {
-    marginLeft: 24,
-    marginRight: 24
-  },
   container: {
     marginBottom: 140
   }
