@@ -1,28 +1,34 @@
 import React, { useContext } from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  FlatList,
+  SafeAreaView
+} from 'react-native';
 import { BookmarksContext } from './providers/BookmarksProvider';
 import Bookmark from './Bookmark';
 
-function HomeScreen () {
+function HomeScreen() {
   const Bookmarks = useContext(BookmarksContext);
 
   return (
-    <View style={styles.container}>
+    <View style={styles.wrapper}>
       <Text style={styles.title}>Bookmarks</Text>
 
       { Bookmarks.all.length === 0 && (
         <Text>No bookmarks</Text>
       )}
       
-      { Bookmarks.all.length > 0 &&
-        Bookmarks.all.map(bookmark => (
-            <Bookmark
-              key={bookmark.id}
-              {...bookmark}
-            />
-          )
-        )
-      }
+      <SafeAreaView>
+        <FlatList
+          data={Bookmarks.all}
+          renderItem={({ item, index, separators }) => (
+            <Bookmark {...item} />
+          )}
+          keyExtractor={bookmark => String(bookmark.id)}
+        />
+      </SafeAreaView>
     </View>
   )
 }
@@ -34,9 +40,9 @@ const styles = StyleSheet.create({
     marginTop: 12,
     marginBottom: 20
   },
-  container: {
-    marginLeft: 16,
-    marginRight: 16
+  wrapper: {
+    marginLeft: 24,
+    marginRight: 24
   }
 })
 

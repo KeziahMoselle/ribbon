@@ -1,11 +1,15 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Linking } from 'expo';
 
-function Bookmark({ title }) {
+function Bookmark({ id, title, url }) {
   return (
-    <View style={styles.card}>
-      <Text style={styles.title}>{ title }</Text>
-    </View>
+    <TouchableOpacity onPress={() => Linking.openURL(url)}>
+      <View style={styles.card}>
+        <Text style={styles.title}>{ title } { id }</Text>
+        <Text>{ url }</Text>
+      </View>
+    </TouchableOpacity>
   )
 }
 
@@ -15,7 +19,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     borderRadius: 10,
     backgroundColor: '#FFFFFF',
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: '#000000'
   },
   title: {
