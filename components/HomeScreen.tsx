@@ -20,7 +20,7 @@ function HomeScreen() {
         <Text>No bookmarks</Text>
       )}
       
-      <SafeAreaView>
+      <SafeAreaView style={styles.container}>
         <FlatList
           data={Bookmarks.all}
           renderItem={({ item, index, separators }) => (
@@ -43,6 +43,9 @@ const styles = StyleSheet.create({
   wrapper: {
     marginLeft: 24,
     marginRight: 24
+  },
+  container: {
+    marginBottom: 140
   }
 })
 
