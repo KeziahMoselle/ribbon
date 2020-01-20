@@ -14,19 +14,20 @@ async function SignIn () {
     
     const result = await AuthSession.startAsync({ authUrl });
 
+    if (result.type === 'dismiss') return
+
     if (result.type !== 'success') return alert(`Error: ${JSON.stringify(result)}`);
     
     const { params } = result
 
-    if (params.state !== state) return alert(`State does not match`);
+    if (params.state !== state) return alert('State does not match');
 
     const token = await createToken(params.code);
     
     console.log(token);
-    AsyncStorage.setItem(STORAGE_REDDIT_KEY, JSON.stringify(token));
+    //AsyncStorage.setItem(STORAGE_REDDIT_KEY, JSON.stringify(token));
   } catch (error) {
     console.error(error);
-    return null;
   }
 }
 
