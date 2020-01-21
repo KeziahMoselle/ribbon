@@ -8,26 +8,21 @@ const REDIRECT_URL = AuthSession.getRedirectUrl();
 const STORAGE_REDDIT_KEY = '@Bookmarks:RedditOAuthKey';
 
 async function SignIn() {
-  try {
-    const state = new Date().valueOf().toString();
-    const authUrl = getAuthUrl(state);
-    const result = await AuthSession.startAsync({ authUrl: authUrl });
+  const state = new Date().valueOf().toString();
+  const authUrl = getAuthUrl(state);
+  const result = await AuthSession.startAsync({ authUrl: authUrl });
+  
+  if (result.type === 'dismiss') return false
+  if (result.type !== 'success') return false
+  
+  const { params } = result;
 
-    if (result.type === 'dismiss') return
+  if (params.state !== state) return false
 
-    if (result.type !== 'success') return alert(`Error: ${JSON.stringify(result)}`);
+  const token = await createToken(params.code);
 
-    const { params } = result
-
-    if (params.state !== state) return alert('State does not match');
-
-    const token = await createToken(params.code);
-
-    console.log('TOKEN ', token);
-    //AsyncStorage.setItem(STORAGE_REDDIT_KEY, JSON.stringify(token));
-  } catch (error) {
-    console.error(error);
-  }
+  await AsyncStorage.setItem(STORAGE_REDDIT_KEY, JSON.stringify(token));
+  return true
 }
 
 function getAuthUrl(state: string) {
@@ -63,7 +58,7 @@ async function createToken(code) {
   }).then(res => res.json());
 }
 
-async function getOauth() {
+async function getToken() {
   const oauth = await AsyncStorage.getItem(STORAGE_REDDIT_KEY);
   return JSON.parse(oauth);
 }
@@ -72,4 +67,4 @@ async function Disconnect() {
   await AsyncStorage.removeItem(STORAGE_REDDIT_KEY);
 }
 
-export { SignIn, getOauth, Disconnect };
+export { SignIn, getToken, Disconnect };

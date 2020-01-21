@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import { Text, View, Button } from 'react-native';
+import React, { useContext, useEffect } from 'react';
+import { Button } from 'react-native';
 import useReddit from '../components/providers/hooks/useReddit';
 import Wrapper from '../components/Layout/Wrapper';
 import Title from '../components/Title';
@@ -20,7 +20,7 @@ function SettingsScreen () {
       <Title>Settings</Title>
 
       <Button
-        title="Login with Reddit"
+        title={isLoggedIn ? 'Revoke access' : 'Login with Reddit'}
         onPress={() => _handleRedditClick()}
         color="#FF5700"
       />

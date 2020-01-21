@@ -1,28 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import * as RedditService from '../services/RedditService';
 
 function useReddit() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [oauth, setOauth] = useState(null);
+  const [token, setToken] = useState(null);
 
   useEffect(() => {
     init();
   }, [])
 
   async function init() {
-    const oauth = await RedditService.getOauth();
-    setOauth(oauth);
-    if (oauth) setIsLoggedIn(true);
+    const token = await RedditService.getToken();
+    setToken(token);
+    if (token) setIsLoggedIn(true);
   }
 
   async function Login() {
-    try {
-      await RedditService.SignIn();
-      setIsLoggedIn(true);
-    } catch (error) {
-      setIsLoggedIn(false);
-      alert(error);
-    }
+    const success = await RedditService.SignIn();
+    if (!success) return
+    setIsLoggedIn(true);
   }
 
   async function Logout() {
@@ -32,7 +28,7 @@ function useReddit() {
 
   return {
     isLoggedIn,
-    oauth,
+    token,
     Login,
     Logout
   };
