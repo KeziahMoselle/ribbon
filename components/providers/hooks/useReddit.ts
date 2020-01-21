@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import * as RedditService from '../services/RedditService';
 
 function useReddit() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [token, setToken] = useState(null);
 
   useEffect(() => {
@@ -11,7 +11,10 @@ function useReddit() {
 
   async function init() {
     const token = await RedditService.getToken();
-    if (!token) return
+    console.log(token)
+    if (!token) {
+      return setIsLoggedIn(false);
+    }
     setToken(token);
     setIsLoggedIn(true);
   }

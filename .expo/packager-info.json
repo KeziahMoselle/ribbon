@@ -1,9 +1,9 @@
 {
   "expoServerPort": 19000,
   "packagerPort": 19001,
-  "packagerPid": 6976,
-  "expoServerNgrokUrl": null,
-  "packagerNgrokUrl": null,
-  "ngrokPid": null,
+  "packagerPid": 25304,
+  "expoServerNgrokUrl": "https://x2-x2p.nemesis.bookmarks-tracking.exp.direct",
+  "packagerNgrokUrl": "https://packager.x2-x2p.nemesis.bookmarks-tracking.exp.direct",
+  "ngrokPid": 14296,
   "devToolsPort": 19002
 }

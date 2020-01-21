@@ -103,7 +103,7 @@ async function refreshToken() {
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
-      Authorization: `Basic ${bearerToken}`,
+      Authorization: `Basic ${token.bearerToken}`,
     },
   }).then(res => res.json());
 }
