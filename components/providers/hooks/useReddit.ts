@@ -11,19 +11,28 @@ function useReddit() {
 
   async function init() {
     const token = await RedditService.getToken();
+    if (!token) return
     setToken(token);
-    if (token) setIsLoggedIn(true);
+    setIsLoggedIn(true);
   }
 
   async function Login() {
     const success = await RedditService.SignIn();
-    if (!success) return
+    if (!success) {
+      setIsLoggedIn(false);
+      setToken(null);
+      return
+    }
+
     setIsLoggedIn(true);
+    const token = await RedditService.getToken();
+    setToken(token);
   }
 
   async function Logout() {
     await RedditService.Disconnect();
     setIsLoggedIn(false);
+    setToken(null);
   }
 
   return {

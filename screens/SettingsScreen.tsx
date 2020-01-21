@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React from 'react';
 import { Button } from 'react-native';
 import useReddit from '../components/providers/hooks/useReddit';
 import Wrapper from '../components/Layout/Wrapper';
