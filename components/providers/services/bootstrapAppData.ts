@@ -1,6 +1,6 @@
 import { getToken } from './RedditService';
 
-async function bootstrapAppData() {
+async function bootstrapAppData(): Promise<RedditToken> {
   const token = await getToken()
   if (!token) {
     return null

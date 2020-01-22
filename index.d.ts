@@ -6,3 +6,9 @@ interface RedditToken {
   scope: string;
   token_type: string;
 }
+
+interface BookmarkInterface {
+  id: number;
+  title: string;
+  url: string;
+}

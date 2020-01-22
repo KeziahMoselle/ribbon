@@ -13,7 +13,7 @@ const STORAGE_REDDIT_KEY = '@Bookmarks:RedditOAuthKey';
  *
  * @returns {boolean}
  */
-async function SignIn() {
+async function SignIn(): Promise<RedditToken> {
   const state = new Date().valueOf().toString();
   const authUrl = getAuthUrl(state);
   const result = await AuthSession.startAsync({ authUrl: authUrl });
@@ -97,11 +97,12 @@ async function createToken(code): Promise<RedditToken> {
 /**
  * It will refresh the token
  * A token expires every hour
+ * TODO
  */
 async function refreshToken() {
   const token = await getToken()
 
-  return fetch('https://www.reddit.com/api/v1/access_token', {
+  fetch('https://www.reddit.com/api/v1/access_token', {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -117,18 +118,18 @@ async function refreshToken() {
  *
  * @returns {object}
  */
-async function getToken() {
-  const oauth = await AsyncStorage.getItem(STORAGE_REDDIT_KEY);
-  return JSON.parse(oauth);
+async function getToken(): Promise<RedditToken> {
+  const token = await AsyncStorage.getItem(STORAGE_REDDIT_KEY);
+  return JSON.parse(token);
 }
 
 
 /**
  * Revoke the token
- *
+ * TODO
  * @returns {boolean}
  */
-async function Disconnect() {
+async function Disconnect(): Promise<any> {
   await AsyncStorage.removeItem(STORAGE_REDDIT_KEY);
 }
 

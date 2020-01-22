@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 const BookmarksContext = React.createContext({
   all: []
@@ -6,82 +6,12 @@ const BookmarksContext = React.createContext({
 
 function BookmarksProvider (props) {
 
-  const [all, setAll] = useState([
+  const [all, setAll] = useState<BookmarkInterface[]>([
     {
       id: 0,
       title: 'My bookmark',
       url: 'https://google.com'
-    },
-    {
-      id: 1,
-      title: 'My bookmark',
-      url: 'https://google.com'
-    },
-    {
-      id: 2,
-      title: 'My bookmark',
-      url: 'https://google.com'
-    },
-    {
-      id: 3,
-      title: 'My bookmark',
-      url: 'https://google.com'
-    },
-    {
-      id: 4,
-      title: 'My bookmark',
-      url: 'https://google.com'
-    },
-    {
-      id: 5,
-      title: 'My bookmark',
-      url: 'https://google.com'
-    },
-    {
-      id: 6,
-      title: 'My bookmark',
-      url: 'https://google.com'
-    },
-    {
-      id: 7,
-      title: 'My bookmark',
-      url: 'https://google.com'
-    },
-    {
-      id: 8,
-      title: 'My bookmark',
-      url: 'https://google.com'
-    },
-    {
-      id: 9,
-      title: 'My bookmark',
-      url: 'https://google.com'
-    },
-    {
-      id: 10,
-      title: 'My bookmark',
-      url: 'https://google.com'
-    },
-    {
-      id: 11,
-      title: 'My bookmark',
-      url: 'https://google.com'
-    },
-    {
-      id: 12,
-      title: 'My bookmark',
-      url: 'https://google.com'
-    },
-    {
-      id: 13,
-      title: 'My bookmark',
-      url: 'https://google.com'
-    },
-    {
-      id: 14,
-      title: 'My bookmark',
-      url: 'https://google.com'
-    },
+    }
   ])
 
   return (

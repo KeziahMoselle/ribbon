@@ -4,9 +4,10 @@ import bootstrapAppData from './services/bootstrapAppData';
 import * as RedditService from './services/RedditService';
 import Loading from '../Loading';
 import ErrorScreen from '../Error';
+import OnboardingScreen from '../../screens/OnboardingScreen';
 
 const AuthContext = React.createContext({
-  token: {},
+  token: null,
   login: null,
   logout: null
 });
@@ -35,7 +36,7 @@ function AuthProvider (props) {
       return <Loading />
     }
 
-    if (isRejected) {
+    if (isRejected || error) {
       return <ErrorScreen />
     }
   }

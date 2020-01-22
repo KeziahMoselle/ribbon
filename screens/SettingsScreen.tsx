@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { useAuth } from '../components/providers/AuthProvider';
 import { Button } from 'react-native';
 import Wrapper from '../components/Layout/Wrapper';

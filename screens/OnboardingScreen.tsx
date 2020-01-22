@@ -1,10 +1,10 @@
 import React from 'react';
 import { TouchableOpacity, View, StyleSheet, Image, Text } from 'react-native';
-import useReddit from '../components/providers/hooks/useReddit';
 import Title from '../components/Title';
+import { useAuth } from '../components/providers/AuthProvider';
 
 function OnboardingScreen () {
-  const { Login } = useReddit();
+  const { login } = useAuth();
 
   return (
     <View style={styles.container}>
@@ -21,7 +21,7 @@ function OnboardingScreen () {
         />
       </View>
 
-      <TouchableOpacity style={styles.btn} onPress={() => Login()}>
+      <TouchableOpacity style={styles.btn} onPress={() => login()}>
         <Text style={styles.btnText}>Login with Reddit</Text>
       </TouchableOpacity>
     </View>
