@@ -3,6 +3,6 @@
   "lanType": "ip",
   "dev": true,
   "minify": false,
-  "urlRandomness": "x2-x2p",
+  "urlRandomness": "pj-zda",
   "https": false
 }

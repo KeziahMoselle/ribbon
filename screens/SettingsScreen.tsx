@@ -1,18 +1,18 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { useAuth } from '../components/providers/AuthProvider';
 import { Button } from 'react-native';
-import useReddit from '../components/providers/hooks/useReddit';
 import Wrapper from '../components/Layout/Wrapper';
 import Title from '../components/Title';
 
 function SettingsScreen () {
-  const { isLoggedIn, Login, Logout } = useReddit();
+  const Reddit = useAuth();
 
   function _handleRedditClick() {
-    if (isLoggedIn) {
-      Logout();
-    } else {
-      Login();
+    if (Reddit.token) {
+      return Reddit.logout();
     }
+
+    Reddit.login();
   }
 
   return (
@@ -20,7 +20,7 @@ function SettingsScreen () {
       <Title>Settings</Title>
 
       <Button
-        title={isLoggedIn ? 'Revoke access' : 'Login with Reddit'}
+        title={Reddit.token ? 'Revoke access' : 'Login with Reddit'}
         onPress={() => _handleRedditClick()}
         color="#FF5700"
       />

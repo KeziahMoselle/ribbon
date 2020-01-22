@@ -7,7 +7,6 @@ const CLIENT_ID = credentials.reddit.clientId;
 const REDIRECT_URL = AuthSession.getRedirectUrl();
 const STORAGE_REDDIT_KEY = '@Bookmarks:RedditOAuthKey';
 
-
 /**
  * Open a browser to initiate the OAuth 2 process
  * After a successful login it will save the token in AsyncStorage
@@ -19,17 +18,21 @@ async function SignIn() {
   const authUrl = getAuthUrl(state);
   const result = await AuthSession.startAsync({ authUrl: authUrl });
   
-  if (result.type === 'dismiss') return false
-  if (result.type !== 'success') return false
+  if (result.type === 'dismiss') throw new Error('Dismiss');
+  if (result.type !== 'success') throw new Error('Error');
   
   const { params } = result;
 
-  if (params.state !== state) return false
+  if (params.state !== state) throw new Error('State does not match');
+  if (params.error === 'access_denied') {
+    alert('Reddit OAuth access denied.')
+    throw new Error('Reddit OAuth access denied.');
+  }
 
   const token = await createToken(params.code);
 
   await AsyncStorage.setItem(STORAGE_REDDIT_KEY, JSON.stringify(token));
-  return true
+  return token
 }
 
 
@@ -64,7 +67,7 @@ function getAuthUrl(state: string) {
  * @param {*} code
  * @returns
  */
-async function createToken(code) {
+async function createToken(code): Promise<RedditToken> {
   const url = (
     `https://www.reddit.com/api/v1/access_token` +
     `?grant_type=authorization_code` +
@@ -73,20 +76,20 @@ async function createToken(code) {
     `&redirect_uri=${encodeURIComponent(REDIRECT_URL)}`
   );
 
-  const bearerToken = new Buffer(`${CLIENT_ID}:`).toString('base64');
+  const bearer_token = new Buffer(`${CLIENT_ID}:`).toString('base64');
 
-  const token = await (await fetch(url, {
+  const token: RedditToken = await (await fetch(url, {
     method: 'POST',
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
-      Authorization: `Basic ${bearerToken}`,
+      Authorization: `Basic ${bearer_token}`,
     },
   })).json();
 
   return {
     ...token,
-    bearerToken
+    bearer_token
   }
 }
 
@@ -103,7 +106,7 @@ async function refreshToken() {
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
-      Authorization: `Basic ${token.bearerToken}`,
+      Authorization: `Basic ${token.bearer_token}`,
     },
   }).then(res => res.json());
 }
