@@ -1,9 +1,8 @@
 {
   "expoServerPort": 19000,
   "packagerPort": 19001,
-  "packagerPid": 7540,
-  "expoServerNgrokUrl": "https://pj-zda.nemesis.bookmarks-tracking.exp.direct",
-  "packagerNgrokUrl": "https://packager.pj-zda.nemesis.bookmarks-tracking.exp.direct",
-  "ngrokPid": 15180,
-  "devToolsPort": 19002
+  "packagerPid": 25092,
+  "expoServerNgrokUrl": null,
+  "packagerNgrokUrl": null,
+  "ngrokPid": null
 }

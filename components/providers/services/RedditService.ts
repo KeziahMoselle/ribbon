@@ -1,11 +1,16 @@
 import { AuthSession } from 'expo';
-import { AsyncStorage } from 'react-native';
+import { AsyncStorage, Platform } from 'react-native';
 import credentials from './credentials';
 import { Buffer } from 'buffer';
+import appInfo from '../../../app.json';
 
 const CLIENT_ID = credentials.reddit.clientId;
 const REDIRECT_URL = AuthSession.getRedirectUrl();
 const STORAGE_REDDIT_KEY = '@Bookmarks:RedditOAuthKey';
+const STORAGE_REDDIT_USERNAME = '@Bookmarks:RedditUsername'
+const USER_AGENT = `${Platform.OS}:${appInfo.expo.android.package}:${appInfo.expo.version} (by /u/${credentials.reddit.creatorUsername})`
+
+console.log(USER_AGENT);
 
 /**
  * Open a browser to initiate the OAuth 2 process
@@ -30,8 +35,14 @@ async function SignIn(): Promise<RedditToken> {
   }
 
   const token = await createToken(params.code);
+  console.log(token);
 
   await AsyncStorage.setItem(STORAGE_REDDIT_KEY, JSON.stringify(token));
+
+  const username = await getRedditUsername();
+
+  await AsyncStorage.setItem(STORAGE_REDDIT_USERNAME, username);
+
   return token
 }
 
@@ -54,7 +65,7 @@ function getAuthUrl(state: string) {
     `&state=${state}` +
     `&redirect_uri=${encodeURIComponent(REDIRECT_URL)}` +
     `&duration=permanent` +
-    `&scope=history`
+    `&scope=${encodeURIComponent(`history identity`)}`
   )
 }
 
@@ -81,9 +92,8 @@ async function createToken(code): Promise<RedditToken> {
   const token: RedditToken = await (await fetch(url, {
     method: 'POST',
     headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
       Authorization: `Basic ${bearer_token}`,
+      'User-Agent': USER_AGENT
     },
   })).json();
 
@@ -91,6 +101,21 @@ async function createToken(code): Promise<RedditToken> {
     ...token,
     bearer_token
   }
+}
+
+async function getRedditUsername(): Promise<string> {
+  const localToken = await AsyncStorage.getItem(STORAGE_REDDIT_KEY);
+  const token = JSON.parse(localToken);
+
+  const url = `https://oauth.reddit.com/api/v1/me/`
+
+  return fetch(url, {
+    headers: {
+      'Authorization': `bearer ${token.access_token}`,
+      'User-Agent': USER_AGENT
+    }
+  }).then(response => response.json())
+    .then(data => data.name)
 }
 
 
@@ -102,14 +127,21 @@ async function createToken(code): Promise<RedditToken> {
 async function refreshToken() {
   const token = await getToken()
 
-  fetch('https://www.reddit.com/api/v1/access_token', {
+  const url = 'https://www.reddit.com/api/v1/access_token'
+
+  const response = await fetch(url, {
     method: 'POST',
     headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
       Authorization: `Basic ${token.bearer_token}`,
     },
-  }).then(res => res.json());
+    body: `grant_type=refresh_token` + 
+          `&refresh_token=${token.access_token}`
+  })
+
+  const newToken = await response.json();
+  console.log(newToken);
+
+  await AsyncStorage.setItem(STORAGE_REDDIT_KEY, JSON.stringify(newToken));
 }
 
 
@@ -130,6 +162,21 @@ async function getToken(): Promise<RedditToken> {
  * @returns {boolean}
  */
 async function Disconnect(): Promise<any> {
+  const token = await getToken()
+
+  const url = 'https://www.reddit.com/api/v1/revoke_token'
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      Authorization: `Basic ${token.bearer_token}`,
+    },
+    body: `token_type_hint=access_token` + 
+          `&token=${token.access_token}`
+  })
+
+  console.log(response);
+
   await AsyncStorage.removeItem(STORAGE_REDDIT_KEY);
 }
 
