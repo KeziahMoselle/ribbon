@@ -7,12 +7,13 @@ import Title from '../components/Title';
 function SettingsScreen () {
   const Reddit = useAuth();
 
-  function _handleRedditClick() {
-    if (Reddit.token) {
-      return Reddit.logout();
+  async function _handleRedditClick() {
+    if (Reddit.isLoggedIn) {
+      await Reddit.logout();
+      return
     }
 
-    Reddit.login();
+    await Reddit.login();
   }
 
   return (
@@ -20,7 +21,7 @@ function SettingsScreen () {
       <Title>Settings</Title>
 
       <Button
-        title={Reddit.token ? 'Revoke access' : 'Login with Reddit'}
+        title={Reddit.isLoggedIn ? 'Revoke access' : 'Login with Reddit'}
         onPress={() => _handleRedditClick()}
         color="#FF5700"
       />

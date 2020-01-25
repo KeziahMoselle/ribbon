@@ -1,13 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useAsync } from 'react-async';
-import bootstrapAppData from './services/bootstrapAppData';
 import * as RedditService from './services/RedditService';
 import Loading from '../Loading';
 import ErrorScreen from '../Error';
-import OnboardingScreen from '../../screens/OnboardingScreen';
 
 const AuthContext = React.createContext({
-  token: null,
+  isLoggedIn: false,
   login: null,
   logout: null
 });
@@ -15,14 +13,14 @@ const AuthContext = React.createContext({
 function AuthProvider (props) {
   const [firstAttemptFinished, setFirstAttemptFinished] = useState(false);
   const {
-    data = {},
+    data,
     error,
     isRejected,
     isPending,
     isSettled,
     reload
   } = useAsync({
-    promiseFn: bootstrapAppData
+    promiseFn: RedditService.bootstrapAppData
   })
 
   useEffect(() => {
@@ -47,7 +45,7 @@ function AuthProvider (props) {
   return (
     <AuthContext.Provider
       value={{
-        token: data,
+        isLoggedIn: data,
         login,
         logout
       }}

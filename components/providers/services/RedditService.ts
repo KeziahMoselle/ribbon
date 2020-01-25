@@ -6,11 +6,11 @@ import appInfo from '../../../app.json';
 
 const CLIENT_ID = credentials.reddit.clientId;
 const REDIRECT_URL = AuthSession.getRedirectUrl();
+const BEARER_TOKEN = new Buffer(`${CLIENT_ID}:`).toString('base64');
 const STORAGE_REDDIT_KEY = '@Bookmarks:RedditOAuthKey';
 const STORAGE_REDDIT_USERNAME = '@Bookmarks:RedditUsername'
 const USER_AGENT = `${Platform.OS}:${appInfo.expo.android.package}:${appInfo.expo.version} (by /u/${credentials.reddit.creatorUsername})`
 
-console.log(USER_AGENT);
 
 /**
  * Open a browser to initiate the OAuth 2 process
@@ -18,7 +18,7 @@ console.log(USER_AGENT);
  *
  * @returns {boolean}
  */
-async function SignIn(): Promise<RedditToken> {
+export async function SignIn(): Promise<RedditToken> {
   const state = new Date().valueOf().toString();
   const authUrl = getAuthUrl(state);
   const result = await AuthSession.startAsync({ authUrl: authUrl });
@@ -35,13 +35,8 @@ async function SignIn(): Promise<RedditToken> {
   }
 
   const token = await createToken(params.code);
-  console.log(token);
 
   await AsyncStorage.setItem(STORAGE_REDDIT_KEY, JSON.stringify(token));
-
-  const username = await getRedditUsername();
-
-  await AsyncStorage.setItem(STORAGE_REDDIT_USERNAME, username);
 
   return token
 }
@@ -87,19 +82,17 @@ async function createToken(code): Promise<RedditToken> {
     `&redirect_uri=${encodeURIComponent(REDIRECT_URL)}`
   );
 
-  const bearer_token = new Buffer(`${CLIENT_ID}:`).toString('base64');
-
   const token: RedditToken = await (await fetch(url, {
     method: 'POST',
     headers: {
-      Authorization: `Basic ${bearer_token}`,
+      Authorization: `Basic ${BEARER_TOKEN}`,
       'User-Agent': USER_AGENT
     },
   })).json();
 
   return {
     ...token,
-    bearer_token
+    token_date: Date.now()
   }
 }
 
@@ -109,13 +102,56 @@ async function getRedditUsername(): Promise<string> {
 
   const url = `https://oauth.reddit.com/api/v1/me/`
 
-  return fetch(url, {
+  const response = await fetch(url, {
     headers: {
       'Authorization': `bearer ${token.access_token}`,
       'User-Agent': USER_AGENT
     }
-  }).then(response => response.json())
-    .then(data => data.name)
+  })
+
+  const data = await response.json();
+
+  await AsyncStorage.setItem(STORAGE_REDDIT_USERNAME, data.username);
+
+  return data.username;
+}
+
+export async function bootstrapAppData() {
+  const token = await getToken();
+  const now = Date.now();
+
+  // If the user is not present, the user is logged out
+  if (!token) {
+    return false
+  }
+
+  // Token expired
+  if (token.token_date - now >= 3600 * 1000) {
+    console.log('Token expired : ', token.token_date - now);
+    await refreshToken()
+  }
+
+  // If token is present and valid, log the user in
+  return true
+}
+
+export async function getSavedPosts() {
+  const localToken = await AsyncStorage.getItem(STORAGE_REDDIT_KEY);
+  const token = JSON.parse(localToken);
+  const username = await AsyncStorage.getItem(STORAGE_REDDIT_USERNAME);
+
+  const url = `https://oauth.reddit.com/api/v1/user/${username}/saved`
+
+  const response = await fetch(url, {
+    headers: {
+      'Authorization': `bearer ${token.access_token}`,
+      'User-Agent': USER_AGENT
+    }
+  })
+
+  const posts = await response.json();
+
+  return posts
 }
 
 
@@ -124,7 +160,7 @@ async function getRedditUsername(): Promise<string> {
  * A token expires every hour
  * TODO
  */
-async function refreshToken() {
+export async function refreshToken() {
   const token = await getToken()
 
   const url = 'https://www.reddit.com/api/v1/access_token'
@@ -132,16 +168,20 @@ async function refreshToken() {
   const response = await fetch(url, {
     method: 'POST',
     headers: {
-      Authorization: `Basic ${token.bearer_token}`,
+      Authorization: `Basic ${BEARER_TOKEN}`,
     },
     body: `grant_type=refresh_token` + 
           `&refresh_token=${token.access_token}`
   })
 
   const newToken = await response.json();
-  console.log(newToken);
 
   await AsyncStorage.setItem(STORAGE_REDDIT_KEY, JSON.stringify(newToken));
+
+  return {
+    ...newToken,
+    token_date: Date.now()
+  };
 }
 
 
@@ -150,7 +190,7 @@ async function refreshToken() {
  *
  * @returns {object}
  */
-async function getToken(): Promise<RedditToken> {
+export async function getToken(): Promise<RedditToken> {
   const token = await AsyncStorage.getItem(STORAGE_REDDIT_KEY);
   return JSON.parse(token);
 }
@@ -161,23 +201,23 @@ async function getToken(): Promise<RedditToken> {
  * TODO
  * @returns {boolean}
  */
-async function Disconnect(): Promise<any> {
-  const token = await getToken()
+export async function Disconnect(): Promise<any> {
+  try {
+    const token = await getToken()
 
-  const url = 'https://www.reddit.com/api/v1/revoke_token'
-
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: {
-      Authorization: `Basic ${token.bearer_token}`,
-    },
-    body: `token_type_hint=access_token` + 
-          `&token=${token.access_token}`
-  })
-
-  console.log(response);
-
-  await AsyncStorage.removeItem(STORAGE_REDDIT_KEY);
+    const url = 'https://www.reddit.com/api/v1/revoke_token'
+  
+    await fetch(url, {
+      method: 'POST',
+      headers: {
+        Authorization: `Basic ${BEARER_TOKEN}`,
+      },
+      body: `token_type_hint=access_token` + 
+            `&token=${token.access_token}`
+    })
+  
+    await AsyncStorage.removeItem(STORAGE_REDDIT_KEY);
+  } catch (error) {
+    await AsyncStorage.removeItem(STORAGE_REDDIT_KEY);
+  }
 }
-
-export { SignIn, getToken, Disconnect };

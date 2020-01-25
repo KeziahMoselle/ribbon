@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import * as RedditService from './services/RedditService';
 
 const BookmarksContext = React.createContext({
   all: []
@@ -6,13 +7,7 @@ const BookmarksContext = React.createContext({
 
 function BookmarksProvider (props) {
 
-  const [all, setAll] = useState<BookmarkInterface[]>([
-    {
-      id: 0,
-      title: 'My bookmark',
-      url: 'https://google.com'
-    }
-  ])
+  const [all, setAll] = useState<BookmarkInterface[]>([])
 
   return (
     <BookmarksContext.Provider
