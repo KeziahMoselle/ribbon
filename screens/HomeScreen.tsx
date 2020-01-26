@@ -10,6 +10,7 @@ import { BookmarksContext } from '../components/providers/BookmarksProvider';
 import Wrapper from '../components/Layout/Wrapper';
 import Title from '../components/Title';
 import Bookmark from '../components/Bookmark';
+import NoBookmark from '../components/NoBookmark';
 
 function HomeScreen() {
   const Bookmarks = useContext(BookmarksContext);
@@ -19,13 +20,13 @@ function HomeScreen() {
       <Title>Bookmarks</Title>
 
       { Bookmarks.all.length === 0 && (
-        <Text>No bookmarks</Text>
+        <NoBookmark />
       )}
       
       <SafeAreaView style={styles.container}>
         <FlatList
           data={Bookmarks.all}
-          renderItem={({ item, index, separators }) => (
+          renderItem={({ item }) => (
             <Bookmark {...item} />
           )}
           keyExtractor={bookmark => String(bookmark.id)}

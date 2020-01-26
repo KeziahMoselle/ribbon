@@ -14,6 +14,7 @@ function Wrapper({ children }) {
 
 const styles = StyleSheet.create({
   wrapper: {
+    flex: 1,
     marginLeft: 24,
     marginRight: 24
   }

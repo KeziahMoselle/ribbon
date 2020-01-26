@@ -27,21 +27,51 @@ export async function SignIn(): Promise<RedditToken> {
   if (result.type !== 'success') throw new Error('Error');
   
   const { params } = result;
-
+  
   if (params.state !== state) throw new Error('State does not match');
   if (params.error === 'access_denied') {
     alert('Reddit OAuth access denied.')
     throw new Error('Reddit OAuth access denied.');
   }
-
+  
   const token = await createToken(params.code);
   await AsyncStorage.setItem(STORAGE_REDDIT_KEY, JSON.stringify(token));
-
+  
   await getRedditUsername();
-
+  
   return token
 }
 
+/**
+ * Revoke the token
+ * TODO
+ * @returns {boolean}
+ */
+export async function Disconnect(): Promise<any> {
+  try {
+    const token = await getToken()
+
+    const url = 'https://www.reddit.com/api/v1/revoke_token'
+  
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Authorization: `Basic ${BEARER_TOKEN}`,
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: `token_type_hint=access_token` + 
+            `&token=${token.access_token}`
+    })
+
+    const data = await response.json();
+
+    console.log(data);
+  
+    await AsyncStorage.removeItem(STORAGE_REDDIT_KEY);
+  } catch (error) {
+    await AsyncStorage.removeItem(STORAGE_REDDIT_KEY);
+  }
+}
 
 /**
  * Construct the OAuth URL
@@ -61,7 +91,7 @@ function getAuthUrl(state: string) {
     `&state=${state}` +
     `&redirect_uri=${encodeURIComponent(REDIRECT_URL)}` +
     `&duration=permanent` +
-    `&scope=${encodeURIComponent(`history identity`)}`
+    `&scope=history`
   )
 }
 
@@ -97,6 +127,16 @@ async function createToken(code): Promise<RedditToken> {
   }
 }
 
+/**
+ * Get the token object from AsyncStorage
+ *
+ * @returns {object}
+ */
+export async function getToken(): Promise<RedditToken> {
+  const token = await AsyncStorage.getItem(STORAGE_REDDIT_KEY);
+  return JSON.parse(token);
+}
+
 async function getRedditUsername(): Promise<string> {
   const token = await getToken();
 
@@ -124,11 +164,11 @@ export async function bootstrapAppData() {
   if (!token) {
     return false
   }
-  
+
   console.log(`Token has : ${(now - token.token_date) / 1000 / 60} minutes`)
 
   // Token expired 1 hour
-  if (now - token.token_date >= 3600 * 1000 || true) {
+  if (now - token.token_date >= 3600 * 1000) {
     console.log('Token expired : ', (now - token.token_date) / 1000 / 60 / 60);
     await refreshToken()
   }
@@ -159,7 +199,6 @@ export async function getSavedPosts() {
 /**
  * It will refresh the token
  * A token expires every hour
- * TODO
  */
 export async function refreshToken() {
   const token = await getToken()
@@ -194,39 +233,3 @@ export async function refreshToken() {
 }
 
 
-/**
- * Get the token object from AsyncStorage
- *
- * @returns {object}
- */
-export async function getToken(): Promise<RedditToken> {
-  const token = await AsyncStorage.getItem(STORAGE_REDDIT_KEY);
-  return JSON.parse(token);
-}
-
-
-/**
- * Revoke the token
- * TODO
- * @returns {boolean}
- */
-export async function Disconnect(): Promise<any> {
-  try {
-    const token = await getToken()
-
-    const url = 'https://www.reddit.com/api/v1/revoke_token'
-  
-    await fetch(url, {
-      method: 'POST',
-      headers: {
-        Authorization: `Basic ${BEARER_TOKEN}`
-      },
-      body: `token_type_hint=access_token` + 
-            `&token=${token.access_token}`
-    })
-  
-    await AsyncStorage.removeItem(STORAGE_REDDIT_KEY);
-  } catch (error) {
-    await AsyncStorage.removeItem(STORAGE_REDDIT_KEY);
-  }
-}
