@@ -124,10 +124,12 @@ export async function bootstrapAppData() {
   if (!token) {
     return false
   }
+  
+  console.log(`Token has : ${(now - token.token_date) / 1000 / 60} minutes`)
 
-  // Token expired
-  if (token.token_date - now >= 3600 * 1000) {
-    console.log('Token expired : ', token.token_date - now);
+  // Token expired 1 hour
+  if (now - token.token_date >= 3600 * 1000 || true) {
+    console.log('Token expired : ', (now - token.token_date) / 1000 / 60 / 60);
     await refreshToken()
   }
 
@@ -140,17 +142,12 @@ export async function getSavedPosts() {
   const username = await AsyncStorage.getItem(STORAGE_REDDIT_USERNAME);
 
   const url = `https://oauth.reddit.com/api/v1/user/${username}/saved`
-  const body = `show=all&limit=100`
-
-  console.log(url);
-  console.log(token.access_token);
 
   const response = await fetch(url, {
     headers: {
       'Authorization': `bearer ${token.access_token}`,
       'User-Agent': USER_AGENT
-    },
-    body
+    }
   })
 
   const posts = await response.json();
@@ -173,19 +170,27 @@ export async function refreshToken() {
     method: 'POST',
     headers: {
       Authorization: `Basic ${BEARER_TOKEN}`,
+      'Content-Type': 'application/x-www-form-urlencoded'
     },
     body: `grant_type=refresh_token` + 
-          `&refresh_token=${token.access_token}`
+          `&refresh_token=${token.refresh_token}`
   })
 
-  const newToken = await response.json();
+  const data = await response.json();
+
+  const newToken = {
+    ...data,
+    token_date: Date.now()
+  }
+
+  if (newToken.error) {
+    await AsyncStorage.removeItem(STORAGE_REDDIT_KEY);
+    return console.error(newToken);
+  }
 
   await AsyncStorage.setItem(STORAGE_REDDIT_KEY, JSON.stringify(newToken));
 
-  return {
-    ...newToken,
-    token_date: Date.now()
-  };
+  return newToken;
 }
 
 
@@ -214,7 +219,7 @@ export async function Disconnect(): Promise<any> {
     await fetch(url, {
       method: 'POST',
       headers: {
-        Authorization: `Basic ${BEARER_TOKEN}`,
+        Authorization: `Basic ${BEARER_TOKEN}`
       },
       body: `token_type_hint=access_token` + 
             `&token=${token.access_token}`

@@ -13,7 +13,7 @@ const AuthContext = React.createContext({
 function AuthProvider (props) {
   const [firstAttemptFinished, setFirstAttemptFinished] = useState(false);
   const {
-    data,
+    data: isLoggedIn,
     error,
     isRejected,
     isPending,
@@ -45,7 +45,7 @@ function AuthProvider (props) {
   return (
     <AuthContext.Provider
       value={{
-        isLoggedIn: data,
+        isLoggedIn,
         login,
         logout
       }}
