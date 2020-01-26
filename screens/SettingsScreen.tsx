@@ -1,27 +1,31 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAuth } from '../components/providers/AuthProvider';
 import { Button } from 'react-native';
 import Wrapper from '../components/Layout/Wrapper';
 import Title from '../components/Title';
 
 function SettingsScreen () {
-  const Reddit = useAuth();
+  const { isLoggedIn, login, logout } = useAuth();
 
   async function _handleRedditClick() {
-    if (Reddit.isLoggedIn) {
-      await Reddit.logout();
+    if (isLoggedIn) {
+      await logout();
       return
     }
 
-    await Reddit.login();
+    await login();
   }
+
+  useEffect(() => {
+    console.log('SettingsScreen.tsx: ', isLoggedIn);
+  }, [isLoggedIn])
 
   return (
     <Wrapper>
       <Title>Settings</Title>
 
       <Button
-        title={Reddit.isLoggedIn ? 'Revoke access' : 'Login with Reddit'}
+        title={isLoggedIn ? 'Revoke access' : 'Login with Reddit'}
         onPress={() => _handleRedditClick()}
         color="#FF5700"
       />

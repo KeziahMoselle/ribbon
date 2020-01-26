@@ -35,8 +35,9 @@ export async function SignIn(): Promise<RedditToken> {
   }
 
   const token = await createToken(params.code);
-
   await AsyncStorage.setItem(STORAGE_REDDIT_KEY, JSON.stringify(token));
+
+  await getRedditUsername();
 
   return token
 }
@@ -97,8 +98,7 @@ async function createToken(code): Promise<RedditToken> {
 }
 
 async function getRedditUsername(): Promise<string> {
-  const localToken = await AsyncStorage.getItem(STORAGE_REDDIT_KEY);
-  const token = JSON.parse(localToken);
+  const token = await getToken();
 
   const url = `https://oauth.reddit.com/api/v1/me/`
 
@@ -136,17 +136,21 @@ export async function bootstrapAppData() {
 }
 
 export async function getSavedPosts() {
-  const localToken = await AsyncStorage.getItem(STORAGE_REDDIT_KEY);
-  const token = JSON.parse(localToken);
+  const token = await getToken();
   const username = await AsyncStorage.getItem(STORAGE_REDDIT_USERNAME);
 
   const url = `https://oauth.reddit.com/api/v1/user/${username}/saved`
+  const body = `show=all&limit=100`
+
+  console.log(url);
+  console.log(token.access_token);
 
   const response = await fetch(url, {
     headers: {
       'Authorization': `bearer ${token.access_token}`,
       'User-Agent': USER_AGENT
-    }
+    },
+    body
   })
 
   const posts = await response.json();

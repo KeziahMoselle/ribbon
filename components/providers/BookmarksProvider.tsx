@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import * as RedditService from './services/RedditService';
 
 const BookmarksContext = React.createContext({
@@ -8,6 +8,20 @@ const BookmarksContext = React.createContext({
 function BookmarksProvider (props) {
 
   const [all, setAll] = useState<BookmarkInterface[]>([])
+
+  useEffect(() => {
+    if (all.length === 0) {
+      getPosts();
+    }
+  }, [])
+
+  async function getPosts() {
+    try {
+      const posts = await RedditService.getSavedPosts();
+      console.log(posts);
+      //setAll(posts);
+    } catch (e) {}
+  }
 
   return (
     <BookmarksContext.Provider
