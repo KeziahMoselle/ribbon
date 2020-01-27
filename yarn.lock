@@ -1832,7 +1832,7 @@
   resolved "https://registry.yarnpkg.com/@expo/traveling-fastlane-linux/-/traveling-fastlane-linux-1.11.3.tgz#f1812db51db335628474e5ccde7b0762d96c77d4"
   integrity sha512-cyr0WDkGOEaOjuVBc3m5Ud4Jrqvvz1RoQdgZ5IKhitW9ElLAQS97aKtgKDAAcQ8Yu7FBYRVt0ilJhP5eweI6+A==
 
-"@expo/vector-icons@^10.0.2":
+"@expo/vector-icons@^10.0.2", "@expo/vector-icons@^10.0.6":
   version "10.0.6"
   resolved "https://registry.yarnpkg.com/@expo/vector-icons/-/vector-icons-10.0.6.tgz#5718953ff0b97827d11dae5787976fa8ce5caaed"
   integrity sha512-qNlKPNdf073LpeEpyClxAh0D3mmIK4TGAQzeKR0HVwf14RIEe17+mLW5Z6Ka5Ho/lUtKMRPDHumSllFyKvpeGg==
