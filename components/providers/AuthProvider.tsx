@@ -6,14 +6,16 @@ import ErrorScreen from '../Error';
 
 const AuthContext = React.createContext({
   isLoggedIn: false,
+  username: null,
   login: null,
   logout: null
 });
 
 function AuthProvider (props) {
   const [firstAttemptFinished, setFirstAttemptFinished] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const {
-    data: isLoggedIn,
+    data: username,
     error,
     isRejected,
     isPending,
@@ -29,6 +31,12 @@ function AuthProvider (props) {
     }
   }, [isSettled])
 
+  useEffect(() => {
+    if (username) {
+      setIsLoggedIn(true);
+    }
+  }, [username])
+
   if (!firstAttemptFinished) {
     if (isPending) {
       return <Loading />
@@ -42,10 +50,12 @@ function AuthProvider (props) {
   const login = () => RedditService.SignIn().then(reload);
   const logout = () => RedditService.Disconnect().then(reload);
 
+
   return (
     <AuthContext.Provider
       value={{
         isLoggedIn,
+        username,
         login,
         logout
       }}

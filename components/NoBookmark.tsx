@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, StyleSheet, Image } from 'react-native';
+import { Button, Title } from 'react-native-paper';
 
 function NoBookmark() {
   return (
@@ -9,15 +10,16 @@ function NoBookmark() {
           style={styles.illustration}
           source={require('../assets/empty.png')}
         />
-        <Text style={styles.title}>No Bookmarks</Text>
+        <Title style={styles.title}>No Bookmarks</Title>
       </View>
 
-      <TouchableOpacity
+      <Button
         onPress={() => {}}
-        style={styles.cta}
+        mode="contained"
+        color="#000"
       >
-        <Text style={styles.ctaText}>Import from reddit</Text>
-      </TouchableOpacity>
+        Import from reddit
+      </Button>
     </View>
   )
 }
@@ -38,7 +40,6 @@ const styles = StyleSheet.create({
     borderColor: '#000000'
   },
   title: {
-    fontWeight: 'bold',
     fontSize: 16,
     marginTop: 26
   },
@@ -46,16 +47,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height: 200,
     width: 200
-  },
-  cta: {
-    paddingHorizontal: 20,
-    paddingVertical: 8,
-    backgroundColor: '#000000',
-    borderRadius: 3
-  },
-  ctaText: {
-    color: '#FFFFFF',
-    textTransform: 'uppercase'
   }
 })
 

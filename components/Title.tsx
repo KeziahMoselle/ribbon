@@ -1,9 +1,10 @@
 import React from 'react';
-import { Text, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { Title } from 'react-native-paper';
 
-function Title ({ children }) {
+function TitleCustom ({ children }) {
   return (
-    <Text style={styles.title}>{ children }</Text>
+    <Title style={styles.title}>{ children }</Title>
   )
 }
 
@@ -16,4 +17,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default Title;
+export default TitleCustom;

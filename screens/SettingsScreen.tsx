@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import { useAuth } from '../components/providers/AuthProvider';
-import { Button } from 'react-native';
+import { Button, Caption } from 'react-native-paper';
 import Wrapper from '../components/Layout/Wrapper';
 import Title from '../components/Title';
 
 function SettingsScreen () {
-  const { isLoggedIn, login, logout } = useAuth();
+  const { isLoggedIn, username, login, logout } = useAuth();
 
   async function _handleRedditClick() {
     if (isLoggedIn) {
@@ -25,10 +25,19 @@ function SettingsScreen () {
       <Title>Settings</Title>
 
       <Button
-        title={isLoggedIn ? 'Revoke access' : 'Login with Reddit'}
         onPress={() => _handleRedditClick()}
+        mode="outlined"
         color="#FF5700"
-      />
+        icon="reddit"
+      >
+        {isLoggedIn ? 'Revoke access' : 'Login with Reddit'}
+      </Button>
+
+      { isLoggedIn &&
+        <Caption>
+          Currently logged in as {username}
+        </Caption>
+      }
     </Wrapper>
   )
 }

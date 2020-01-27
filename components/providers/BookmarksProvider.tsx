@@ -12,11 +12,11 @@ function BookmarksProvider (props) {
     try {
       const posts = await RedditService.getSavedPosts();
       console.log(JSON.stringify(posts));
-      //setAll(posts);
+      setAll(posts);
     } catch (e) {}
   }
     
-  getPosts();
+  // getPosts();
 
   return (
     <BookmarksContext.Provider

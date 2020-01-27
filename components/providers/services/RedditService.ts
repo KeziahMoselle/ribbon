@@ -37,7 +37,7 @@ export async function SignIn(): Promise<RedditToken> {
   const token = await createToken(params.code);
   await AsyncStorage.setItem(STORAGE_REDDIT_KEY, JSON.stringify(token));
   
-  await getRedditUsername();
+  await fetchUserInfo();
   
   return token
 }
@@ -137,7 +137,7 @@ export async function getToken(): Promise<RedditToken> {
   return JSON.parse(token);
 }
 
-async function getRedditUsername(): Promise<string> {
+async function fetchUserInfo(): Promise<string> {
   const token = await getToken();
 
   const url = `https://oauth.reddit.com/api/v1/me/`
@@ -156,13 +156,14 @@ async function getRedditUsername(): Promise<string> {
   return data.username;
 }
 
+
 export async function bootstrapAppData() {
   const token = await getToken();
   const now = Date.now();
 
   // If the user is not present, the user is logged out
   if (!token) {
-    return false
+    return null
   }
 
   console.log(`Token has : ${(now - token.token_date) / 1000 / 60} minutes`)
@@ -174,7 +175,8 @@ export async function bootstrapAppData() {
   }
 
   // If token is present and valid, log the user in
-  return true
+  const username = await AsyncStorage.getItem(STORAGE_REDDIT_USERNAME);
+  return username
 }
 
 export async function getSavedPosts() {
