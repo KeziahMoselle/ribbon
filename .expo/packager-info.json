@@ -1,9 +1,9 @@
 {
   "expoServerPort": 19000,
   "packagerPort": 19001,
-  "packagerPid": 4052,
+  "packagerPid": 3408,
   "expoServerNgrokUrl": "https://76-c4j.nemesis.bookmarks-tracking.exp.direct",
   "packagerNgrokUrl": "https://packager.76-c4j.nemesis.bookmarks-tracking.exp.direct",
-  "ngrokPid": 12624,
+  "ngrokPid": 16080,
   "devToolsPort": 19002
 }
