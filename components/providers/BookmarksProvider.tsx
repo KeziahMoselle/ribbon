@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import * as RedditService from './services/RedditService';
+import RedditService from './services/RedditService';
 
 const BookmarksContext = React.createContext({
   all: []
