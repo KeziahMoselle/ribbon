@@ -66,6 +66,39 @@ class RedditService {
   }
 
     /**
+   * Bootstrap the app in the AuthProvider
+   * It will log the user in if a token is present and valid
+   * otherwise it will refresh it
+   * And if there is no token it returns null
+   */
+  bootstrapAppData = async () => {
+    const token = await this._getToken();
+    const now = Date.now();
+
+    console.log('Bootstrap', token);
+
+    // If the user is not present, the user is logged out
+    if (!token) {
+      return null
+    }
+  
+    console.log(`Token has : ${(now - token.token_date) / 1000 / 60} minutes`)
+  
+    // Token expired 1 hour
+    if (now - token.token_date >= 3600 * 1000) {
+      console.log(`Token expired :  ${(now - token.token_date) / 1000 / 60 / 60} hours`);
+      await this._refreshToken()
+    }
+  
+    // If token is present and valid, log the user in
+    const username = await AsyncStorage.getItem(this.STORAGE_REDDIT_USERNAME);
+
+    console.log('Bootstrap', username);
+
+    return username
+  }
+
+    /**
    * It will fetch saved posts from Reddit
    * and store them
    */
