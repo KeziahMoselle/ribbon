@@ -1,12 +1,12 @@
-import React, { useContext } from 'react';
-import { BookmarksContext } from '../components/providers/BookmarksProvider';
+import React from 'react';
+import { useBookmarks } from '../components/providers/BookmarksProvider';
 import Wrapper from '../components/Layout/Wrapper';
 import Title from '../components/Title';
 import BookmarksList from '../components/BookmarksList';
 import NoBookmark from '../components/NoBookmark';
 
 function HomeScreen() {
-  const Bookmarks = useContext(BookmarksContext);
+  const Bookmarks = useBookmarks();
 
   return (
     <Wrapper>

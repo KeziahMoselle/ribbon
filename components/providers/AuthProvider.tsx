@@ -67,6 +67,7 @@ function AuthProvider (props) {
 
 function useAuth() {
   const context = useContext(AuthContext);
+  
   if (context === undefined) {
     throw new Error('useAuth must be used withing an AuthProvider');
   }
