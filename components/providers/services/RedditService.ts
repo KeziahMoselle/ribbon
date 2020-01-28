@@ -21,7 +21,7 @@ class RedditService {
    */
   SignIn = async (): Promise<RedditToken> => {
     const state = new Date().valueOf().toString();
-    const authUrl = this.getAuthUrl(state);
+    const authUrl = this._getAuthUrl(state);
     const result = await AuthSession.startAsync({ authUrl });
     
     if (result.type === 'dismiss') return
@@ -35,10 +35,10 @@ class RedditService {
       return
     }
     
-    const token = await this.createToken(params.code);
+    const token = await this._createToken(params.code);
     await AsyncStorage.setItem(this.STORAGE_REDDIT_KEY, JSON.stringify(token));
     
-    await this.fetchUserInfo();
+    await this._fetchUserInfo();
     
     return token
   }
@@ -47,7 +47,7 @@ class RedditService {
    * Revoke the token
    */
   Disconnect = async (): Promise<any> => {
-    const token = await this.getToken()
+    const token = await this._getToken()
 
     const url = 'https://www.reddit.com/api/v1/revoke_token'
   
@@ -64,6 +64,28 @@ class RedditService {
     await AsyncStorage.removeItem(this.STORAGE_REDDIT_KEY);
     await AsyncStorage.removeItem(this.STORAGE_REDDIT_USERNAME);
   }
+
+    /**
+   * It will fetch saved posts from Reddit
+   * and store them
+   */
+  getSavedPosts = async () => {
+    const token = await this._getToken();
+    const username = await AsyncStorage.getItem(this.STORAGE_REDDIT_USERNAME);
+
+    const url = `https://oauth.reddit.com/api/v1/user/${username}/saved`
+
+    const response = await fetch(url, {
+      headers: {
+        'Authorization': `bearer ${token.access_token}`,
+        'User-Agent': this.USER_AGENT
+      }
+    })
+
+    const posts = await response.json();
+
+    return posts
+  }
   
 
   /**
@@ -73,7 +95,7 @@ class RedditService {
    * REDIRECT_URL - Should match the Redirect URI field of the Reddit app
    * state - The date string, to get a somewhat unique value
    */
-  getAuthUrl = (state: string) => {
+  _getAuthUrl = (state: string) => {
     return (
       'https://www.reddit.com/api/v1/authorize.compact' +
       `?client_id=${this.CLIENT_ID}` +
@@ -91,7 +113,7 @@ class RedditService {
    * It will fetch the `access_token` endpoint
    * to get the token
    */
-  createToken = async (code: string): Promise<RedditToken> => {
+  _createToken = async (code: string): Promise<RedditToken> => {
     const url = (
       `https://www.reddit.com/api/v1/access_token` +
       `?grant_type=authorization_code` +
@@ -117,7 +139,7 @@ class RedditService {
   /**
    * Get the token object from AsyncStorage
    */
-  getToken = async (): Promise<RedditToken> => {
+  _getToken = async (): Promise<RedditToken> => {
     if (this.token) return this.token
 
     const token = await AsyncStorage.getItem(this.STORAGE_REDDIT_KEY);
@@ -130,8 +152,8 @@ class RedditService {
    * Fetch the username from Reddit
    * Store the username
    */
-  fetchUserInfo = async (): Promise<string> => {
-    const token = await this.getToken();
+  _fetchUserInfo = async (): Promise<string> => {
+    const token = await this._getToken();
 
     const url = `https://oauth.reddit.com/api/v1/me/`
 
@@ -151,34 +173,11 @@ class RedditService {
 
 
   /**
-   * It will fetch saved posts from Reddit
-   * and store them
-   */
-  getSavedPosts = async () => {
-    const token = await this.getToken();
-    const username = await AsyncStorage.getItem(this.STORAGE_REDDIT_USERNAME);
-
-    const url = `https://oauth.reddit.com/api/v1/user/${username}/saved`
-
-    const response = await fetch(url, {
-      headers: {
-        'Authorization': `bearer ${token.access_token}`,
-        'User-Agent': this.USER_AGENT
-      }
-    })
-
-    const posts = await response.json();
-
-    return posts
-  }
-
-
-  /**
    * It will refresh the token
    * A token expires every hour
    */
-  refreshToken = async () => {
-    const token = await this.getToken()
+  _refreshToken = async () => {
+    const token = await this._getToken()
 
     const url = 'https://www.reddit.com/api/v1/access_token'
 
