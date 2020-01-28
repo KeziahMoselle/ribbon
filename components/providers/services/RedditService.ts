@@ -15,8 +15,6 @@ const USER_AGENT = `${Platform.OS}:${appInfo.expo.android.package}:${appInfo.exp
 /**
  * Open a browser to initiate the OAuth 2 process
  * After a successful login it will save the token in AsyncStorage
- *
- * @returns {boolean}
  */
 export async function SignIn(): Promise<RedditToken> {
   const state = new Date().valueOf().toString();
@@ -44,8 +42,6 @@ export async function SignIn(): Promise<RedditToken> {
 
 /**
  * Revoke the token
- * TODO
- * @returns {boolean}
  */
 export async function Disconnect(): Promise<any> {
   try {
@@ -53,7 +49,7 @@ export async function Disconnect(): Promise<any> {
 
     const url = 'https://www.reddit.com/api/v1/revoke_token'
   
-    const response = await fetch(url, {
+    await fetch(url, {
       method: 'POST',
       headers: {
         Authorization: `Basic ${BEARER_TOKEN}`,
@@ -62,10 +58,6 @@ export async function Disconnect(): Promise<any> {
       body: `token_type_hint=access_token` + 
             `&token=${token.access_token}`
     })
-
-    const data = await response.json();
-
-    console.log(data);
   
     await AsyncStorage.removeItem(STORAGE_REDDIT_KEY);
   } catch (error) {
@@ -79,9 +71,6 @@ export async function Disconnect(): Promise<any> {
  * CLIENT_ID - The Reddit client id (not secret)
  * REDIRECT_URL - Should match the Redirect URI field of the Reddit app
  * state - The date string, to get a somewhat unique value
- *
- * @param {string} state
- * @returns {string}
  */
 function getAuthUrl(state: string) {
   return (
@@ -100,11 +89,8 @@ function getAuthUrl(state: string) {
  * Called by SignIn()
  * It will fetch the `access_token` endpoint
  * to get the token
- *
- * @param {*} code
- * @returns
  */
-async function createToken(code): Promise<RedditToken> {
+async function createToken(code: string): Promise<RedditToken> {
   const url = (
     `https://www.reddit.com/api/v1/access_token` +
     `?grant_type=authorization_code` +
@@ -129,14 +115,17 @@ async function createToken(code): Promise<RedditToken> {
 
 /**
  * Get the token object from AsyncStorage
- *
- * @returns {object}
  */
 export async function getToken(): Promise<RedditToken> {
   const token = await AsyncStorage.getItem(STORAGE_REDDIT_KEY);
   return JSON.parse(token);
 }
 
+
+/**
+ * Fetch the username from Reddit
+ * Store the username
+ */
 async function fetchUserInfo(): Promise<string> {
   const token = await getToken();
 
@@ -157,6 +146,12 @@ async function fetchUserInfo(): Promise<string> {
 }
 
 
+/**
+ * Called when the app starts
+ * It will check if a token is present
+ * if yes : log the user in and pass the username
+ * if no : return null
+ */
 export async function bootstrapAppData() {
   const token = await getToken();
   const now = Date.now();
@@ -179,6 +174,11 @@ export async function bootstrapAppData() {
   return username
 }
 
+
+/**
+ * It will fetch saved posts from Reddit
+ * and store them
+ */
 export async function getSavedPosts() {
   const token = await getToken();
   const username = await AsyncStorage.getItem(STORAGE_REDDIT_USERNAME);

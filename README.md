@@ -1,13 +1,16 @@
 # Bookmarks tracking
 
-This is an application which aim to help you complete reading your bookmarks and get rid of them (once and for all !)
+This is an application which aim to help you complete reading your bookmarks
+
+## Technical flow
 
 This will be done by collecting your bookmarks via OAuth
 
 Supported services :
 - Reddit (Saved)
-- Twitter (Bookmark)
-- Youtube (Watch later)
+- GitHub (Stars)
+- ~~Twitter (Bookmark)~~ (API endpoint closed)
+- ~~Youtube (Watch later)~~ (API endpoint closed)
 
 After that you will be able to configure notifications
 
