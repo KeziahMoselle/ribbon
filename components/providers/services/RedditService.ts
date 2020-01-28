@@ -170,7 +170,7 @@ export async function bootstrapAppData() {
 
   // Token expired 1 hour
   if (now - token.token_date >= 3600 * 1000) {
-    console.log('Token expired : ', (now - token.token_date) / 1000 / 60 / 60);
+    console.log(`Token expired :  ${(now - token.token_date) / 1000 / 60 / 60} hours`);
     await refreshToken()
   }
 
