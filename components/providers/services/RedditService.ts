@@ -6,10 +6,6 @@ import appInfo from '../../../app.json';
 
 class RedditService {
 
-  constructor() {
-    alert(`${this.CLIENT_ID} | ${this.REDIRECT_URL}`);
-  }
-
   CLIENT_ID = credentials.clientId;
   REDIRECT_URL = AuthSession.getRedirectUrl();
   BEARER_TOKEN = new Buffer(`${this.CLIENT_ID}:`).toString('base64');

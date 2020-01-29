@@ -14,15 +14,23 @@ import ReminderBtn from '../components/Settings/ReminderBtn';
 function SettingsScreen () {
   const { isLoggedIn, username, login, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  const [isAuthLoading, SetIsAuthLoading] = useState(false);
   const [reminder, setReminder] = useState(new Date());
 
   async function _handleRedditClick() {
+    // Loading and disable button
+    SetIsAuthLoading(true);
+
     if (isLoggedIn) {
       await logout();
+      // Clear loading and disable state
+      SetIsAuthLoading(false);
       return
     }
 
     await login();
+    // Clear loading and disable state
+    SetIsAuthLoading(false);
   }
 
   function updateReminder(event, date: Date) {
@@ -41,6 +49,8 @@ function SettingsScreen () {
       <Section title="Services">
         <Button
           onPress={() => _handleRedditClick()}
+          loading={isAuthLoading}
+          disabled={isAuthLoading}
           mode="outlined"
           color="#FF5700"
           icon="reddit"
