@@ -20,27 +20,31 @@ class RedditService {
    * After a successful login it will save the token in AsyncStorage
    */
   SignIn = async (): Promise<RedditToken> => {
-    const state = new Date().valueOf().toString();
-    const authUrl = this._getAuthUrl(state);
-    const result = await AuthSession.startAsync({ authUrl });
-    
-    if (result.type === 'dismiss') return
-    if (result.type !== 'success') return
-    
-    const { params } = result;
-    
-    if (params.state !== state) return
-    if (params.error === 'access_denied') {
-      alert('Reddit OAuth access denied.')
-      return
+    try {
+      const state = new Date().valueOf().toString();
+      const authUrl = this._getAuthUrl(state);
+      const result = await AuthSession.startAsync({ authUrl });
+      
+      if (result.type === 'dismiss') return
+      if (result.type !== 'success') return
+      
+      const { params } = result;
+      
+      if (params.state !== state) return
+      if (params.error === 'access_denied') {
+        alert('Reddit OAuth access denied.')
+        return
+      }
+      
+      const token = await this._createToken(params.code);
+
+      await this._setToken(token);
+      await this._fetchUserInfo();
+      
+      return token
+    } catch (error) {
+      console.error(error);
     }
-    
-    const token = await this._createToken(params.code);
-    await AsyncStorage.setItem(this.STORAGE_REDDIT_KEY, JSON.stringify(token));
-    
-    await this._fetchUserInfo();
-    
-    return token
   }
 
   /**
@@ -60,42 +64,44 @@ class RedditService {
       body: `token_type_hint=access_token` + 
             `&token=${token.access_token}`
     })
-  
+
     await AsyncStorage.removeItem(this.STORAGE_REDDIT_KEY);
     await AsyncStorage.removeItem(this.STORAGE_REDDIT_USERNAME);
+    this.token = null;
   }
 
     /**
    * Bootstrap the app in the AuthProvider
    * It will log the user in if a token is present and valid
    * otherwise it will refresh it
-   * And if there is no token it returns null
    */
   bootstrapAppData = async () => {
     const token = await this._getToken();
     const now = Date.now();
 
-    console.log('Bootstrap', token);
-
     // If the user is not present, the user is logged out
     if (!token) {
-      return null
+      return {
+        isLoggedIn: false,
+        username: null
+      }
     }
   
-    console.log(`Token has : ${(now - token.token_date) / 1000 / 60} minutes`)
+    console.log(`Token age: (${(now - token.token_date) / 1000 / 60} minutes)`)
   
     // Token expired 1 hour
     if (now - token.token_date >= 3600 * 1000) {
-      console.log(`Token expired :  ${(now - token.token_date) / 1000 / 60 / 60} hours`);
+      console.log(`Token refreshing 🔄 (${(now - token.token_date) / 1000 / 60 / 60} hours)`);
       await this._refreshToken()
     }
   
     // If token is present and valid, log the user in
     const username = await AsyncStorage.getItem(this.STORAGE_REDDIT_USERNAME);
 
-    console.log('Bootstrap', username);
-
-    return username
+    return {
+      isLoggedIn: true,
+      username
+    }
   }
 
     /**
@@ -136,7 +142,7 @@ class RedditService {
       `&state=${state}` +
       `&redirect_uri=${encodeURIComponent(this.REDIRECT_URL)}` +
       `&duration=permanent` +
-      `&scope=history`
+      `&scope=${encodeURIComponent(`history identity`)}`
     )
   }
 
@@ -173,11 +179,16 @@ class RedditService {
    * Get the token object from AsyncStorage
    */
   _getToken = async (): Promise<RedditToken> => {
-    if (this.token) return this.token
+    if (this.token) return this.token;
 
-    const token = await AsyncStorage.getItem(this.STORAGE_REDDIT_KEY);
-    this.token = token
-    return JSON.parse(token);
+    const localToken = await AsyncStorage.getItem(this.STORAGE_REDDIT_KEY);
+    const token = JSON.parse(localToken);
+    return token;
+  }
+
+  _setToken = async (token) => {
+    this.token = token;
+    await AsyncStorage.setItem(this.STORAGE_REDDIT_KEY, JSON.stringify(token));
   }
 
 
@@ -199,9 +210,11 @@ class RedditService {
 
     const data = await response.json();
 
-    await AsyncStorage.setItem(this.STORAGE_REDDIT_USERNAME, data.username);
+    await AsyncStorage.setItem(this.STORAGE_REDDIT_USERNAME, data.name);
 
-    return data.username;
+    await AsyncStorage.getItem(this.STORAGE_REDDIT_USERNAME)
+
+    return data.name;
   }
 
 
@@ -231,9 +244,9 @@ class RedditService {
       token_date: Date.now()
     }
 
-    if (newToken.error) return console.log(newToken);
+    if (newToken.error) return console.error(newToken);
 
-    await AsyncStorage.setItem(this.STORAGE_REDDIT_KEY, JSON.stringify(newToken));
+    this._setToken(newToken);
 
     return newToken;
   }

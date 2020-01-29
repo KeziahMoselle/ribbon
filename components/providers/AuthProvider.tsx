@@ -13,9 +13,8 @@ const AuthContext = React.createContext({
 
 function AuthProvider (props) {
   const [firstAttemptFinished, setFirstAttemptFinished] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const {
-    data: username,
+    data = { isLoggedIn: false, username: null },
     error,
     isRejected,
     isPending,
@@ -32,10 +31,8 @@ function AuthProvider (props) {
   }, [isSettled])
 
   useEffect(() => {
-    if (username) {
-      setIsLoggedIn(true);
-    }
-  }, [username])
+    console.log('AuthProvider data', data);
+  }, [data])
 
   if (!firstAttemptFinished) {
     if (isPending) {
@@ -54,8 +51,8 @@ function AuthProvider (props) {
   return (
     <AuthContext.Provider
       value={{
-        isLoggedIn,
-        username,
+        isLoggedIn: data.isLoggedIn,
+        username: data.username,
         login,
         logout
       }}

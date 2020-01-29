@@ -17,6 +17,8 @@
     "android": {
       "package": "com.keziahmoselle.bookmarks",
       "versionCode": 1
-    }
+    },
+    "description": "",
+    "githubUrl": "https://github.com/KeziahMoselle/bookmarks-tracking"
   }
 }
