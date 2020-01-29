@@ -6,12 +6,16 @@ import appInfo from '../../../app.json';
 
 class RedditService {
 
-  CLIENT_ID = credentials.reddit.clientId;
+  constructor() {
+    alert(`${this.CLIENT_ID} | ${this.REDIRECT_URL}`);
+  }
+
+  CLIENT_ID = credentials.clientId;
   REDIRECT_URL = AuthSession.getRedirectUrl();
   BEARER_TOKEN = new Buffer(`${this.CLIENT_ID}:`).toString('base64');
   STORAGE_REDDIT_KEY = '@Bookmarks:RedditOAuthKey';
   STORAGE_REDDIT_USERNAME = '@Bookmarks:RedditUsername'
-  USER_AGENT = `${Platform.OS}:${appInfo.expo.android.package}:${appInfo.expo.version} (by /u/${credentials.reddit.creatorUsername})`
+  USER_AGENT = `${Platform.OS}:${appInfo.expo.android.package}:${appInfo.expo.version} (by /u/${credentials.creatorUsername})`
 
   token = null
 

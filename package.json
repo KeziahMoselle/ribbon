@@ -4,7 +4,9 @@
     "ios": "react-native run-ios",
     "web": "expo start --web",
     "start": "expo start",
+    "clear": "export start --clear",
     "devtools": "react-devtools",
+    "dist": "expo publish --release-channel production",
     "test": "jest"
   },
   "dependencies": {
@@ -30,7 +32,7 @@
     "@types/react": "~16.9.0",
     "@types/react-native": "~0.60.23",
     "babel-preset-expo": "~8.0.0",
-    "expo-cli": "3.11.5",
+    "babel-plugin-inline-dotenv": "^1.5.0",
     "jest-expo": "~36.0.1",
     "react-devtools": "^3",
     "typescript": "~3.6.3"

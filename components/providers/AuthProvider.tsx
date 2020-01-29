@@ -30,10 +30,6 @@ function AuthProvider (props) {
     }
   }, [isSettled])
 
-  useEffect(() => {
-    console.log('AuthProvider data', data);
-  }, [data])
-
   if (!firstAttemptFinished) {
     if (isPending) {
       return <Loading />
