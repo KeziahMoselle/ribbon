@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { AsyncStorage } from 'react-native';
 import { useAsync } from 'react-async';
 import RedditService from './services/RedditService';
 import Loading from '../Loading';
@@ -8,7 +9,8 @@ const AuthContext = React.createContext({
   isLoggedIn: false,
   username: null,
   login: null,
-  logout: null
+  logout: null,
+  reset: null
 });
 
 function AuthProvider (props) {
@@ -42,7 +44,10 @@ function AuthProvider (props) {
 
   const login = () => RedditService.SignIn().then(reload);
   const logout = () => RedditService.Disconnect().then(reload);
-
+  async function reset() {
+    await RedditService.Disconnect();
+    await AsyncStorage.clear();
+  }
 
   return (
     <AuthContext.Provider
@@ -50,7 +55,8 @@ function AuthProvider (props) {
         isLoggedIn: data.isLoggedIn,
         username: data.username,
         login,
-        logout
+        logout,
+        reset
       }}
     >
       {props.children}

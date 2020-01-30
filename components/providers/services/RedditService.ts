@@ -112,18 +112,40 @@ class RedditService {
     const token = await this._getToken();
     const username = await AsyncStorage.getItem(this.STORAGE_REDDIT_USERNAME);
 
-    const url = `https://oauth.reddit.com/api/v1/user/${username}/saved`
+    const url = `https://oauth.reddit.com/user/${username}/saved`
 
     const response = await fetch(url, {
+      method: 'GET',
       headers: {
         'Authorization': `bearer ${token.access_token}`,
         'User-Agent': this.USER_AGENT
       }
     })
 
-    const posts = await response.json();
+    const result = await response.json();
 
-    return posts
+    if (result.error) {
+      console.error(result.message);
+      return
+    }
+
+    const savedPosts: BookmarkInterface[] = [];
+
+    for (const post of result.data.children) {
+      const { data } = post;
+
+      savedPosts.push({
+        id: `${data.subreddit}:${data.name}`,
+        title: data.title,
+        description: data.selftext,
+        subreddit: data.subreddit_name_prefixed,
+        permalink: `https://reddit.com${data.permalink}`,
+        preview: data.preview?.images[0].source.url,
+        url: data.url,
+      })
+    }
+
+    return savedPosts;
   }
   
 
@@ -182,6 +204,9 @@ class RedditService {
     if (this.token) return this.token;
 
     const localToken = await AsyncStorage.getItem(this.STORAGE_REDDIT_KEY);
+
+    if (!localToken) return null;
+    
     const token = JSON.parse(localToken);
     return token;
   }

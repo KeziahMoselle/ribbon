@@ -10,5 +10,9 @@ interface RedditToken {
 interface BookmarkInterface {
   id: number;
   title: string;
+  description: string;
+  subreddit: string;
+  permalink: string;
+  preview?: string;
   url: string;
 }

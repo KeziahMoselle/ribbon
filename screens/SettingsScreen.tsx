@@ -10,6 +10,7 @@ import Wrapper from '../components/Layout/Wrapper';
 import Title from '../components/Title';
 import Section from '../components/Settings/Section';
 import ReminderBtn from '../components/Settings/ReminderBtn';
+import SectionData from '../components/Settings/SectionData';
 
 function SettingsScreen () {
   const { isLoggedIn, username, login, logout } = useAuth();
@@ -48,7 +49,7 @@ function SettingsScreen () {
 
       <Section title="Services">
         <Button
-          onPress={() => _handleRedditClick()}
+          onPress={_handleRedditClick}
           loading={isAuthLoading}
           disabled={isAuthLoading}
           mode="outlined"
@@ -86,6 +87,8 @@ function SettingsScreen () {
         )}
 
       </Section>
+
+      <SectionData />
       
     </Wrapper>
   )

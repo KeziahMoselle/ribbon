@@ -1,8 +1,11 @@
 import React from 'react';
 import { View, StyleSheet, Image } from 'react-native';
 import { Button, Title } from 'react-native-paper';
+import { useBookmarks } from './providers/BookmarksProvider';
 
 function NoBookmark() {
+  const { refetch } = useBookmarks();
+
   return (
     <View style={styles.container}>
       <View style={styles.card}>
@@ -14,11 +17,11 @@ function NoBookmark() {
       </View>
 
       <Button
-        onPress={() => {}}
+        onPress={refetch}
         mode="contained"
         color="#000"
       >
-        Import from reddit
+        Import Bookmarks
       </Button>
     </View>
   )
