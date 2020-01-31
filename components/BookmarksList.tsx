@@ -1,5 +1,5 @@
 import React from 'react';
-import { SafeAreaView, FlatList, StyleSheet } from 'react-native';
+import { FlatList } from 'react-native';
 import Bookmark from './Bookmark';
 
 interface Props {
@@ -8,22 +8,14 @@ interface Props {
 
 function BookmarksList(props: Props) {
   return (
-    <SafeAreaView style={styles.container}>
-      <FlatList
-        data={props.bookmarks}
-        renderItem={({ item }) => (
-          <Bookmark {...item} />
-        )}
-        keyExtractor={bookmark => String(bookmark.id)}
-      />
-    </SafeAreaView>
+    <FlatList
+      data={props.bookmarks}
+      renderItem={({ item }) => (
+        <Bookmark {...item} />
+      )}
+      keyExtractor={bookmark => String(bookmark.id)}
+    />
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    marginBottom: 140
-  }
-})
 
 export default BookmarksList

@@ -5,19 +5,20 @@ import { Linking } from 'expo';
 
 function Bookmark({ id, title, url }) {
   return (
-    <TouchableRipple onPress={() => Linking.openURL(url)}>
-      <View style={styles.card}>
-        <Text style={styles.title}>{ title } { id }</Text>
-        <Text>{ url }</Text>
-      </View>
-    </TouchableRipple>
+    <View style={{ marginBottom: 20 }}>
+      <TouchableRipple onPress={() => Linking.openURL(url)}>
+        <View style={styles.card}>
+          <Text style={styles.title}>{ title }</Text>
+          <Text>{ url }</Text>
+        </View>
+      </TouchableRipple>
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
   card: {
     padding: 16,
-    marginBottom: 16,
     borderRadius: 8,
     backgroundColor: '#FFFFFF',
     borderWidth: 2,

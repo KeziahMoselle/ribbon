@@ -30,7 +30,7 @@ const TabNavigator = createMaterialBottomTabNavigator(
     initialRouteName: 'Bookmarks',
     activeColor: '#FFF',
     inactiveColor: '#EEE',
-    barStyle: { backgroundColor: '#000' }
+    barStyle: { backgroundColor: '#000', marginTop: 10 }
   }
 )
 
