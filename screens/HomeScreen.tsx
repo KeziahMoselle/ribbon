@@ -11,17 +11,17 @@ function HomeScreen() {
 
   return (
     <Wrapper>
-      <SafeAreaView>
         <Title>Bookmarks</Title>
 
         { Bookmarks.all.length === 0 && (
           <NoBookmark />
         )}
-
-        { Bookmarks.all.length > 0 && (
-          <BookmarksList bookmarks={Bookmarks.all} />
-        )}
-      </SafeAreaView>
+          
+        <SafeAreaView>
+          { Bookmarks.all.length > 0 && (
+            <BookmarksList bookmarks={Bookmarks.all} />
+          )}
+        </SafeAreaView>
     </Wrapper>
   )
 }

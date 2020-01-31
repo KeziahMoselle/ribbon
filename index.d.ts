@@ -8,7 +8,8 @@ interface RedditToken {
 }
 
 interface BookmarkInterface {
-  id: number;
+  kind: 'link' | 'comment';
+  id: string;
   title: string;
   description: string;
   subreddit: string;

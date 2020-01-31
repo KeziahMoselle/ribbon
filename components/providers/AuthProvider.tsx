@@ -47,6 +47,7 @@ function AuthProvider (props) {
   async function reset() {
     await RedditService.Disconnect();
     await AsyncStorage.clear();
+    reload();
   }
 
   return (

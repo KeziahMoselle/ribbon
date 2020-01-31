@@ -3,7 +3,9 @@ import { View, Text, StyleSheet } from 'react-native';
 import { TouchableRipple } from 'react-native-paper';
 import { Linking } from 'expo';
 
-function Bookmark({ id, title, url }) {
+// I want to type the { id, title, url } with : BookmarkInterface
+// Without doing : Bookmark(props: BookmarkInterface)
+function Bookmark({ id, title, url }: BookmarkInterface) {
   return (
     <View style={{ marginBottom: 20 }}>
       <TouchableRipple onPress={() => Linking.openURL(url)}>

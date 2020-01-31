@@ -124,6 +124,8 @@ class RedditService {
 
     const result = await response.json();
 
+    console.log(result);
+
     if (result.error) {
       console.error(result.message);
       return
@@ -134,15 +136,37 @@ class RedditService {
     for (const post of result.data.children) {
       const { data } = post;
 
-      savedPosts.push({
-        id: `${data.subreddit}:${data.name}`,
-        title: data.title,
-        description: data.selftext,
-        subreddit: data.subreddit_name_prefixed,
-        permalink: `https://reddit.com${data.permalink}`,
-        preview: data.preview?.images[0].source.url,
-        url: data.url,
-      })
+      let newPost: BookmarkInterface;
+
+      // kind = Link
+      if (post.kind === 't3') {
+        newPost= {
+          kind: 'link',
+          id: `${data.subreddit}:${data.name}`,
+          title: data.title,
+          description: data.selftext,
+          subreddit: data.subreddit_name_prefixed,
+          permalink: data.link_permalink,
+          preview: data.preview,
+          url: data.url,
+        }
+      }
+
+      // kind = Comment
+      if (post.kind === 't1') {
+        newPost = {
+          kind: 'comment',
+          id: `${data.subreddit}:${data.name}`,
+          title: data.link_title,
+          description: data.selftext,
+          subreddit: data.subreddit_name_prefixed,
+          permalink: data.link_permalink,
+          preview: data.preview,
+          url: data.link_url,
+        }
+      }
+
+      savedPosts.push(newPost);
     }
 
     return savedPosts;
