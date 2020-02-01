@@ -65,9 +65,7 @@ class RedditService {
       body: `token_type_hint=access_token` + 
             `&token=${token.access_token}`
     })
-
-    await AsyncStorage.removeItem(this.STORAGE_REDDIT_KEY);
-    await AsyncStorage.removeItem(this.STORAGE_REDDIT_USERNAME);
+    
     this.token = null;
   }
 
@@ -130,8 +128,6 @@ class RedditService {
     })
 
     const result = await response.json();
-
-    console.log(result);
 
     if (result.error) {
       console.error(result.message);

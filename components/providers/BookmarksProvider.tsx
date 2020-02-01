@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useAsync } from 'react-async'
 import RedditService from './services/RedditService';
-import { AsyncStorage } from 'react-native';
 
 const BookmarksContext = React.createContext({
-  all: [],
-  refetch: null
+  all: null,
+  refetch: null,
+  reload: null
 });
 
 function BookmarksProvider (props) {
@@ -29,7 +29,8 @@ function BookmarksProvider (props) {
     <BookmarksContext.Provider
       value={{
         all,
-        refetch
+        refetch,
+        reload
       }}
     >
       {props.children}

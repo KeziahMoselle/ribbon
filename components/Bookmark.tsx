@@ -21,11 +21,6 @@ function Bookmark({
   thumbnail,
   url
  }: BookmarkInterface) {
-
-  if (!title || !description) {
-    console.log(kind, title, date, description, subreddit);
-  }
-
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -34,7 +29,7 @@ function Bookmark({
       </View>
 
       <TouchableRipple
-        onPress={() => Linking.openURL(permalink)}
+        onPress={() => Linking.openURL(permalink || url)}
         style={styles.imageContainer}
       >
         { thumbnail && (

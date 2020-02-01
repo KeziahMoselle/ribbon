@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../components/providers/AuthProvider';
+import { useBookmarks } from '../components/providers/BookmarksProvider';
 import { View } from 'react-native';
 import {
   Button,
@@ -10,10 +11,10 @@ import Wrapper from '../components/Layout/Wrapper';
 import Title from '../components/Title';
 import Section from '../components/Settings/Section';
 import ReminderBtn from '../components/Settings/ReminderBtn';
-import SectionData from '../components/Settings/SectionData';
 
 function SettingsScreen () {
   const { isLoggedIn, username, login, logout } = useAuth();
+  const { reload } = useBookmarks();
   const [isOpen, setIsOpen] = useState(false);
   const [isAuthLoading, SetIsAuthLoading] = useState(false);
   const [reminder, setReminder] = useState(new Date());
@@ -24,6 +25,8 @@ function SettingsScreen () {
 
     if (isLoggedIn) {
       await logout();
+      // Reload bookmarks context so it clears the state
+      reload();
       // Clear loading and disable state
       SetIsAuthLoading(false);
       return
@@ -87,8 +90,6 @@ function SettingsScreen () {
         )}
 
       </Section>
-
-      <SectionData />
       
     </Wrapper>
   )

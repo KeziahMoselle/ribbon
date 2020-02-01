@@ -9,8 +9,7 @@ const AuthContext = React.createContext({
   isLoggedIn: false,
   username: null,
   login: null,
-  logout: null,
-  reset: null
+  logout: null
 });
 
 function AuthProvider (props) {
@@ -42,12 +41,25 @@ function AuthProvider (props) {
     }
   }
 
-  const login = () => RedditService.SignIn().then(reload);
-  const logout = () => RedditService.Disconnect().then(reload);
-  async function reset() {
-    await RedditService.Disconnect();
-    await AsyncStorage.clear();
-    reload();
+  async function login() {
+    try {
+      await RedditService.SignIn();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      reload();
+    }
+  }
+
+  async function logout() {
+    try {
+      await RedditService.Disconnect();
+      await AsyncStorage.clear();
+    } catch(error) {
+      console.log(error);
+    } finally {
+      reload();
+    }
   }
 
   return (
@@ -56,8 +68,7 @@ function AuthProvider (props) {
         isLoggedIn: data.isLoggedIn,
         username: data.username,
         login,
-        logout,
-        reset
+        logout
       }}
     >
       {props.children}

@@ -1,10 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, Image } from 'react-native';
 import { Button, Title } from 'react-native-paper';
+import { useAuth } from './providers/AuthProvider';
 import { useBookmarks } from './providers/BookmarksProvider';
 
 function NoBookmark() {
+  const { isLoggedIn, login } = useAuth();
   const { refetch } = useBookmarks();
+  const [isImportLoading, setIsImportLoading] = useState(false);
+
+  async function importBookmarks() {
+    setIsImportLoading(true);
+    if (isLoggedIn) {
+      await refetch();
+    } else {
+      await login();
+      await refetch();
+    }
+    setIsImportLoading(false);
+  }
 
   return (
     <View style={styles.container}>
@@ -17,9 +31,11 @@ function NoBookmark() {
       </View>
 
       <Button
-        onPress={refetch}
+        onPress={importBookmarks}
         mode="contained"
         color="#000"
+        loading={isImportLoading}
+        disabled={isImportLoading}
       >
         Import Bookmarks
       </Button>
