@@ -7,13 +7,30 @@ interface RedditToken {
   token_date: number;
 }
 
+interface RedditPreviewInterface {
+  images: {
+    source: {
+      url: string;
+      width: number;
+      height: number;
+    };
+    resolutions: {
+      url: string;
+      width: number;
+      height: number;
+    }[];
+  }[];
+  enabled: boolean;
+}
+
 interface BookmarkInterface {
-  kind: 'link' | 'comment';
+  kind: 'Link' | 'Comment';
   id: string;
   title: string;
+  date: number;
   description: string;
   subreddit: string;
   permalink: string;
-  preview?: string;
+  thumbnail?: string;
   url: string;
 }

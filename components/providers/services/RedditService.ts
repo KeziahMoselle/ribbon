@@ -10,8 +10,9 @@ class RedditService {
   REDIRECT_URL = AuthSession.getRedirectUrl();
   BEARER_TOKEN = new Buffer(`${this.CLIENT_ID}:`).toString('base64');
   STORAGE_REDDIT_KEY = '@Bookmarks:RedditOAuthKey';
-  STORAGE_REDDIT_USERNAME = '@Bookmarks:RedditUsername'
-  USER_AGENT = `${Platform.OS}:${appInfo.expo.android.package}:${appInfo.expo.version} (by /u/${credentials.creatorUsername})`
+  STORAGE_REDDIT_USERNAME = '@Bookmarks:RedditUsername';
+  STORAGE_REDDIT_BOOKMARKS = '@Bookmarks:RedditBookmarks';
+  USER_AGENT = `${Platform.OS}:${appInfo.expo.android.package}:${appInfo.expo.version} (by /u/${credentials.creatorUsername})`;
 
   token = null
 
@@ -109,10 +110,16 @@ class RedditService {
    * and store them
    */
   getSavedPosts = async () => {
+    const localBookmarks = await AsyncStorage.getItem(this.STORAGE_REDDIT_BOOKMARKS);
+
+    if (localBookmarks) {
+      return JSON.parse(localBookmarks);
+    }
+
     const token = await this._getToken();
     const username = await AsyncStorage.getItem(this.STORAGE_REDDIT_USERNAME);
 
-    const url = `https://oauth.reddit.com/user/${username}/saved`
+    const url = `https://oauth.reddit.com/user/${username}/saved?raw_json=1`
 
     const response = await fetch(url, {
       method: 'GET',
@@ -138,16 +145,30 @@ class RedditService {
 
       let newPost: BookmarkInterface;
 
+      const preview: RedditPreviewInterface = data.preview;
+      // The resolution index is the middle level of compression
+      const resolutionIndex = Math.round(preview?.images[0].resolutions.length / 2);
+      const previewUrl = preview?.images[0].resolutions[resolutionIndex].url;
+
+      let thumbnail: string;
+
+      if (previewUrl) {
+        thumbnail = previewUrl;
+      } else {
+        thumbnail = data.link_url;
+      }
+
       // kind = Link
       if (post.kind === 't3') {
         newPost= {
-          kind: 'link',
+          kind: 'Link',
           id: `${data.subreddit}:${data.name}`,
           title: data.title,
+          date: data.created,
           description: data.selftext,
           subreddit: data.subreddit_name_prefixed,
           permalink: data.link_permalink,
-          preview: data.preview,
+          thumbnail,
           url: data.url,
         }
       }
@@ -155,19 +176,25 @@ class RedditService {
       // kind = Comment
       if (post.kind === 't1') {
         newPost = {
-          kind: 'comment',
+          kind: 'Comment',
           id: `${data.subreddit}:${data.name}`,
           title: data.link_title,
+          date: data.created,
           description: data.selftext,
           subreddit: data.subreddit_name_prefixed,
           permalink: data.link_permalink,
-          preview: data.preview,
+          thumbnail,
           url: data.link_url,
         }
       }
 
       savedPosts.push(newPost);
     }
+
+    await AsyncStorage.setItem(
+      this.STORAGE_REDDIT_BOOKMARKS,
+      JSON.stringify(savedPosts)
+    );
 
     return savedPosts;
   }
@@ -194,6 +221,32 @@ class RedditService {
 
 
   /**
+   * Fetch the username from Reddit
+   * Store the username
+   */
+  _fetchUserInfo = async (): Promise<string> => {
+    const token = await this._getToken();
+
+    const url = `https://oauth.reddit.com/api/v1/me/`
+
+    const response = await fetch(url, {
+      headers: {
+        'Authorization': `bearer ${token.access_token}`,
+        'User-Agent': this.USER_AGENT
+      }
+    })
+
+    const data = await response.json();
+
+    await AsyncStorage.setItem(this.STORAGE_REDDIT_USERNAME, data.name);
+
+    await AsyncStorage.getItem(this.STORAGE_REDDIT_USERNAME)
+
+    return data.name;
+  }
+
+
+    /**
    * Called by SignIn()
    * It will fetch the `access_token` endpoint
    * to get the token
@@ -238,32 +291,6 @@ class RedditService {
   _setToken = async (token) => {
     this.token = token;
     await AsyncStorage.setItem(this.STORAGE_REDDIT_KEY, JSON.stringify(token));
-  }
-
-
-  /**
-   * Fetch the username from Reddit
-   * Store the username
-   */
-  _fetchUserInfo = async (): Promise<string> => {
-    const token = await this._getToken();
-
-    const url = `https://oauth.reddit.com/api/v1/me/`
-
-    const response = await fetch(url, {
-      headers: {
-        'Authorization': `bearer ${token.access_token}`,
-        'User-Agent': this.USER_AGENT
-      }
-    })
-
-    const data = await response.json();
-
-    await AsyncStorage.setItem(this.STORAGE_REDDIT_USERNAME, data.name);
-
-    await AsyncStorage.getItem(this.STORAGE_REDDIT_USERNAME)
-
-    return data.name;
   }
 
 

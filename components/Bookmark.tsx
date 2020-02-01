@@ -1,34 +1,100 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { TouchableRipple } from 'react-native-paper';
+import { View, StyleSheet, Image } from 'react-native';
+import {
+  Title,
+  Paragraph,
+  Caption,
+  Button,
+  Chip,
+  TouchableRipple
+} from 'react-native-paper';
 import { Linking } from 'expo';
+import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
-// I want to type the { id, title, url } with : BookmarkInterface
-// Without doing : Bookmark(props: BookmarkInterface)
-function Bookmark({ id, title, url }: BookmarkInterface) {
+function Bookmark({
+  kind,
+  title,
+  date,
+  description,
+  subreddit,
+  permalink,
+  thumbnail,
+  url
+ }: BookmarkInterface) {
+
+  if (!title || !description) {
+    console.log(kind, title, date, description, subreddit);
+  }
+
   return (
-    <View style={{ marginBottom: 20 }}>
-      <TouchableRipple onPress={() => Linking.openURL(url)}>
-        <View style={styles.card}>
-          <Text style={styles.title}>{ title }</Text>
-          <Text>{ url }</Text>
-        </View>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Title>{ subreddit }</Title>
+        <Caption>{ formatDistanceToNow(date * 1000) } ago</Caption>
+      </View>
+
+      <TouchableRipple
+        onPress={() => Linking.openURL(permalink)}
+        style={styles.imageContainer}
+      >
+        { thumbnail && (
+          <Image
+            source={{ uri: thumbnail }}
+            style={styles.image}
+          />
+        ) || (
+          <View>
+            { title && <Caption>{ title }</Caption>}
+            { description && <Paragraph>{ description }</Paragraph> }
+          </View>
+        )}
       </TouchableRipple>
+
+      <View style={styles.footer}>
+        <Chip
+          icon={kind.toLowerCase()}
+        >
+          { kind }
+        </Chip>
+
+        <Button
+          mode="contained"
+          color="#000"
+          icon="pin-outline"
+          contentStyle={{ height: 34 }}
+        >
+          Pin
+        </Button>
+      </View>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  card: {
-    padding: 16,
-    borderRadius: 8,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 2,
-    borderColor: '#000000'
+  container: {
+    marginBottom: 26
   },
-  title: {
-    fontWeight: 'bold',
-    fontSize: 16
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+  imageContainer: {
+    width: '100%',
+    height: 150,
+    overflow: 'hidden'
+  },
+  image: {
+    flex: 1,
+    width: undefined,
+    height: undefined,
+    resizeMode: 'cover',
+    borderRadius: 8
+  },
+  footer: {
+    marginTop: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
   }
 })
 
