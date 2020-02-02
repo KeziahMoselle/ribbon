@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { AsyncStorage } from 'react-native';
 import { useAsync } from 'react-async';
 import RedditService from './services/RedditService';
 import Loading from '../Loading';
@@ -59,7 +58,6 @@ function AuthProvider (props) {
     } catch(error) {
       console.log(error);
     } finally {
-      console.log('AuthProvider: Reload')
       reload();
     }
   }

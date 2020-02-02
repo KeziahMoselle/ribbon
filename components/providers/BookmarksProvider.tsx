@@ -26,13 +26,16 @@ function BookmarksProvider (props) {
     }
   }, [redditPosts])
 
+  useEffect(() => {
+    console.log('reload: ', reload);
+  }, [reload])
+
   async function refetch() {
     try {
       RedditService.fetchSavedPosts();
     } catch (error) {
       console.log(error);
     } finally {
-      console.log('BookmarksProvider: Reload')
       reload();
     }
   }

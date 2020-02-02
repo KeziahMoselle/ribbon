@@ -147,25 +147,25 @@ class RedditService {
     const savedPosts: BookmarkInterface[] = [];
 
     for (const post of result.data.children) {
-      const { data } = post;
+      const data: RedditPostData = post.data;
 
       let newPost: BookmarkInterface;
 
-      const preview: RedditPreviewInterface = data.preview;
-      // The resolution index is the middle level of compression
-      const resolutionIndex = Math.round(preview?.images[0].resolutions.length / 2);
-      const previewUrl = preview?.images[0].resolutions[resolutionIndex].url;
-
-      let thumbnail: string;
-
-      if (previewUrl) {
-        thumbnail = previewUrl;
-      } else {
-        thumbnail = data.link_url;
-      }
-
       // kind = Link
       if (post.kind === 't3') {
+        const preview: RedditPreviewInterface = data.preview;
+        // The resolution index is the middle level of compression
+        const resolutionIndex = Math.round(preview?.images[0].resolutions.length / 2);
+        const previewUrl = preview?.images[0].resolutions[resolutionIndex].url;
+
+        let thumbnail: string;
+
+        if (previewUrl) {
+          thumbnail = previewUrl;
+        } else {
+          thumbnail = data.link_url;
+        }
+
         newPost= {
           kind: 'Link',
           id: `${data.subreddit}:${data.name}`,
@@ -181,6 +181,12 @@ class RedditService {
 
       // kind = Comment
       if (post.kind === 't1') {
+        let thumbnail: string;
+
+        if (data.link_url?.endsWith('.jpg') || data.link_url?.endsWith('.png')) {
+          thumbnail = data.link_url
+        }
+
         newPost = {
           kind: 'Comment',
           id: `${data.subreddit}:${data.name}`,

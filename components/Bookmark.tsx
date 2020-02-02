@@ -28,22 +28,24 @@ function Bookmark({
         <Caption>{ formatDistanceToNow(date * 1000) } ago</Caption>
       </View>
 
-      <TouchableRipple
-        onPress={() => Linking.openURL(permalink || url)}
-        style={styles.imageContainer}
-      >
-        { thumbnail && (
+      { thumbnail && (
+        <TouchableRipple
+          onPress={() => Linking.openURL(permalink || url)}
+          style={styles.imageContainer}
+        >
           <Image
             source={{ uri: thumbnail }}
             style={styles.image}
           />
-        ) || (
-          <View>
-            { title && <Caption>{ title }</Caption>}
-            { description && <Paragraph>{ description }</Paragraph> }
-          </View>
-        )}
-      </TouchableRipple>
+        </TouchableRipple>
+      )}
+
+      { !thumbnail && (
+        <View style={styles.textContent}>
+          { title && <Caption>{ title }</Caption>}
+          { description && <Paragraph>{ description }</Paragraph> }
+        </View>
+      )}
 
       <View style={styles.footer}>
         <Chip
@@ -75,8 +77,7 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     width: '100%',
-    height: 150,
-    overflow: 'hidden'
+    height: 150
   },
   image: {
     flex: 1,
@@ -84,6 +85,10 @@ const styles = StyleSheet.create({
     height: undefined,
     resizeMode: 'cover',
     borderRadius: 8
+  },
+  textContent: {
+    elevation: 1,
+    overflow: 'hidden'
   },
   footer: {
     marginTop: 8,

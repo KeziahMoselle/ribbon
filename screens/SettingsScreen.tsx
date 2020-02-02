@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../components/providers/AuthProvider';
 import { useBookmarks } from '../components/providers/BookmarksProvider';
 import { View } from 'react-native';
@@ -19,10 +19,15 @@ function SettingsScreen () {
   const [isAuthLoading, SetIsAuthLoading] = useState(false);
   const [reminder, setReminder] = useState(new Date());
 
+  useEffect(() => {
+    console.log(reload);
+  }, [reload])
+
   async function _handleRedditClick() {
     // Loading and disable button
     SetIsAuthLoading(true);
 
+    
     if (isLoggedIn) {
       await logout();
       // Reload bookmarks context so it clears the state
@@ -33,6 +38,7 @@ function SettingsScreen () {
     }
 
     await login();
+    reload();
     // Clear loading and disable state
     SetIsAuthLoading(false);
   }
