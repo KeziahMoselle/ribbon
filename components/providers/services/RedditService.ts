@@ -69,12 +69,12 @@ class RedditService {
     this.token = null;
   }
 
-    /**
+  /**
    * Bootstrap the app in the AuthProvider
    * It will log the user in if a token is present and valid
    * otherwise it will refresh it
    */
-  bootstrapAppData = async () => {
+  bootstrapAuthData = async () => {
     const token = await this._getToken();
     const now = Date.now();
 
@@ -103,17 +103,27 @@ class RedditService {
     }
   }
 
-    /**
+
+  /**
+   * Bootstrap the Bookmarks data in the BookmarksProvider
+   * Display bookmarks if they are found
+   * Otherwise display the "NoBookmark" component
+   */
+  bootstrapBookmarksData = async () => {
+    const localBookmarks = await AsyncStorage.getItem(this.STORAGE_REDDIT_BOOKMARKS);
+
+    if (!localBookmarks) {
+      return null;
+    }
+    
+    return JSON.parse(localBookmarks);
+  }
+
+  /**
    * It will fetch saved posts from Reddit
    * and store them
    */
-  getSavedPosts = async () => {
-    const localBookmarks = await AsyncStorage.getItem(this.STORAGE_REDDIT_BOOKMARKS);
-
-    if (localBookmarks) {
-      return JSON.parse(localBookmarks);
-    }
-
+  fetchSavedPosts = async () => {
     const token = await this._getToken();
     const username = await AsyncStorage.getItem(this.STORAGE_REDDIT_USERNAME);
 
@@ -194,6 +204,19 @@ class RedditService {
 
     return savedPosts;
   }
+
+
+  /**
+   * Remove all the keys related to RedditService
+   * from AsyncStorage
+   */
+  clearStorage = async () => {
+    await AsyncStorage.multiRemove([
+      this.STORAGE_REDDIT_KEY,
+      this.STORAGE_REDDIT_USERNAME,
+      this.STORAGE_REDDIT_BOOKMARKS
+    ])
+  }
   
 
   /**
@@ -242,7 +265,7 @@ class RedditService {
   }
 
 
-    /**
+  /**
    * Called by SignIn()
    * It will fetch the `access_token` endpoint
    * to get the token
@@ -284,6 +307,11 @@ class RedditService {
     return token;
   }
 
+
+  /**
+   * Set the property token
+   * Set the token in the AsyncStorage
+   */
   _setToken = async (token) => {
     this.token = token;
     await AsyncStorage.setItem(this.STORAGE_REDDIT_KEY, JSON.stringify(token));

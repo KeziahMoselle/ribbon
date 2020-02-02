@@ -22,7 +22,7 @@ function AuthProvider (props) {
     isSettled,
     reload
   } = useAsync({
-    promiseFn: RedditService.bootstrapAppData
+    promiseFn: RedditService.bootstrapAuthData
   })
 
   useEffect(() => {
@@ -44,6 +44,7 @@ function AuthProvider (props) {
   async function login() {
     try {
       await RedditService.SignIn();
+      await RedditService.fetchSavedPosts();
     } catch (error) {
       console.log(error);
     } finally {
@@ -54,10 +55,11 @@ function AuthProvider (props) {
   async function logout() {
     try {
       await RedditService.Disconnect();
-      await AsyncStorage.clear();
+      await RedditService.clearStorage();
     } catch(error) {
       console.log(error);
     } finally {
+      console.log('AuthProvider: Reload')
       reload();
     }
   }

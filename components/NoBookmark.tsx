@@ -9,6 +9,12 @@ function NoBookmark() {
   const { refetch } = useBookmarks();
   const [isImportLoading, setIsImportLoading] = useState(false);
 
+
+  /**
+   * Is logged in : refetch bookmarks from Reddit
+   * If not logged in : Initiate the OAuth process
+   * and refetch
+   */
   async function importBookmarks() {
     setIsImportLoading(true);
     if (isLoggedIn) {

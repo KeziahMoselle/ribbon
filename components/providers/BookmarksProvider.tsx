@@ -14,16 +14,28 @@ function BookmarksProvider (props) {
     data: redditPosts,
     reload
   } = useAsync({
-    promiseFn: RedditService.getSavedPosts
+    promiseFn: RedditService.bootstrapBookmarksData
   })
 
   useEffect(() => {
+    console.log('redditPosts', redditPosts);
     if (redditPosts) {
       setAll([...all, ...redditPosts]);
+    } else {
+      setAll([]);
     }
   }, [redditPosts])
 
-  const refetch = () => RedditService.getSavedPosts().then(reload);
+  async function refetch() {
+    try {
+      RedditService.fetchSavedPosts();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      console.log('BookmarksProvider: Reload')
+      reload();
+    }
+  }
 
   return (
     <BookmarksContext.Provider
