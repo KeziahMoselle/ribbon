@@ -1,19 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FlatList } from 'react-native';
+import { useBookmarks } from './providers/BookmarksProvider';
 import Bookmark from './Bookmark';
 
-interface Props {
-  bookmarks: BookmarkInterface[]
-}
+function BookmarksList() {
+  const { bookmarks, refetch } = useBookmarks();
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
-function BookmarksList(props: Props) {
+  async function onRefresh() {
+    try {
+      setIsRefreshing(true);
+      await refetch();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsRefreshing(false);
+    }
+  }
+
   return (
     <FlatList
-      data={props.bookmarks}
+      data={bookmarks}
       renderItem={({ item }) => (
         <Bookmark {...item} />
       )}
       keyExtractor={bookmark => String(bookmark.id)}
+      refreshing={isRefreshing}
+      onRefresh={onRefresh}
     />
   )
 }

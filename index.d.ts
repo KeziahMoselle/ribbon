@@ -1,3 +1,10 @@
+interface AuthProvider {
+  isLoggedIn: boolean,
+  username: string,
+  login: () => Promise,
+  logout: () => Promise
+}
+
 interface RedditToken {
   access_token: string;
   expires_in: number;
@@ -104,10 +111,17 @@ interface BookmarkInterface {
   kind: 'Link' | 'Comment';
   id: string;
   title: string;
-  date: number;
+  date: string;
   description: string;
   subreddit: string;
   permalink: string;
   thumbnail?: string;
   url: string;
+}
+
+interface BookmarksProvider {
+  bookmarks: BookmarkInterface[];
+  status: 'initial' | 'pending' | 'fulfilled' | 'rejected';
+  refetch: () => Promise;
+  reload: () => void;
 }

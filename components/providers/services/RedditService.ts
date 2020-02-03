@@ -2,6 +2,7 @@ import { AuthSession } from 'expo';
 import { AsyncStorage, Platform } from 'react-native';
 import credentials from './credentials';
 import { Buffer } from 'buffer';
+import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import appInfo from '../../../app.json';
 
 class RedditService {
@@ -113,7 +114,7 @@ class RedditService {
     const localBookmarks = await AsyncStorage.getItem(this.STORAGE_REDDIT_BOOKMARKS);
 
     if (!localBookmarks) {
-      return null;
+      throw 'No bookmarks';
     }
     
     return JSON.parse(localBookmarks);
@@ -151,6 +152,8 @@ class RedditService {
 
       let newPost: BookmarkInterface;
 
+      const date = formatDistanceToNow(data.created_utc * 1000);
+
       // kind = Link
       if (post.kind === 't3') {
         const preview: RedditPreviewInterface = data.preview;
@@ -170,7 +173,7 @@ class RedditService {
           kind: 'Link',
           id: `${data.subreddit}:${data.name}`,
           title: data.title,
-          date: data.created,
+          date,
           description: data.selftext,
           subreddit: data.subreddit_name_prefixed,
           permalink: data.link_permalink,
@@ -191,7 +194,7 @@ class RedditService {
           kind: 'Comment',
           id: `${data.subreddit}:${data.name}`,
           title: data.link_title,
-          date: data.created,
+          date,
           description: data.selftext,
           subreddit: data.subreddit_name_prefixed,
           permalink: data.link_permalink,

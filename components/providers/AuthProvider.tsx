@@ -4,12 +4,7 @@ import RedditService from './services/RedditService';
 import Loading from '../Loading';
 import ErrorScreen from '../Error';
 
-const AuthContext = React.createContext({
-  isLoggedIn: false,
-  username: null,
-  login: null,
-  logout: null
-});
+const AuthContext = React.createContext<AuthProvider | null>(null);
 
 function AuthProvider (props) {
   const [firstAttemptFinished, setFirstAttemptFinished] = useState(false);

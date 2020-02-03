@@ -19,26 +19,18 @@ function SettingsScreen () {
   const [isAuthLoading, SetIsAuthLoading] = useState(false);
   const [reminder, setReminder] = useState(new Date());
 
-  useEffect(() => {
-    console.log(reload);
-  }, [reload])
-
   async function _handleRedditClick() {
     // Loading and disable button
     SetIsAuthLoading(true);
-
     
     if (isLoggedIn) {
       await logout();
-      // Reload bookmarks context so it clears the state
-      reload();
       // Clear loading and disable state
       SetIsAuthLoading(false);
       return
     }
 
     await login();
-    reload();
     // Clear loading and disable state
     SetIsAuthLoading(false);
   }

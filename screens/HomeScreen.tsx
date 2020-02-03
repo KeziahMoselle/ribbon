@@ -7,19 +7,19 @@ import NoBookmark from '../components/NoBookmark';
 import { SafeAreaView } from 'react-native';
 
 function HomeScreen() {
-  const Bookmarks = useBookmarks();
+  const { status } = useBookmarks();
 
   return (
     <Wrapper>
         <Title>Bookmarks</Title>
 
-        { Bookmarks.all.length === 0 && (
+        { status === 'initial' || status === 'pending' && (
           <NoBookmark />
         )}
           
         <SafeAreaView>
-          { Bookmarks.all.length > 0 && (
-            <BookmarksList bookmarks={Bookmarks.all} />
+          { status === 'fulfilled' && (
+            <BookmarksList />
           )}
         </SafeAreaView>
     </Wrapper>
