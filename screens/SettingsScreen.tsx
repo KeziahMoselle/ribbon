@@ -25,6 +25,7 @@ function SettingsScreen () {
     
     if (isLoggedIn) {
       await logout();
+      reload();
       // Clear loading and disable state
       SetIsAuthLoading(false);
       return

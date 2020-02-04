@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useBookmarks } from '../components/providers/BookmarksProvider';
 import Wrapper from '../components/Layout/Wrapper';
 import Title from '../components/Title';
@@ -13,7 +13,7 @@ function HomeScreen() {
     <Wrapper>
         <Title>Bookmarks</Title>
 
-        { status === 'initial' || status === 'pending' && (
+        { status !== 'fulfilled' && (
           <NoBookmark />
         )}
           

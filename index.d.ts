@@ -14,6 +14,23 @@ interface RedditToken {
   token_date: number;
 }
 
+interface RedditResponse {
+  kind: string;
+  data: {
+    modhash: string;
+    dist: number;
+    children: RedditPost[];
+    after: string;
+    before: string;
+  },
+  error: string;
+}
+
+interface RedditPost {
+  kind: 't1' | 't2' | 't3' | 't4' | 't5' | 't6';
+  data: RedditPostData;
+}
+
 interface RedditPostData {
   title: string;
   selftext: string;
