@@ -132,7 +132,7 @@ interface BookmarkInterface {
   description: string;
   subreddit: string;
   permalink: string;
-  thumbnail?: string;
+  thumbnail: string | void;
   url: string;
 }
 
