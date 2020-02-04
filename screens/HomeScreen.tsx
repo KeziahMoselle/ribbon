@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useBookmarks } from '../components/providers/BookmarksProvider';
 import Wrapper from '../components/Layout/Wrapper';
 import Title from '../components/Title';
@@ -7,19 +7,19 @@ import NoBookmark from '../components/NoBookmark';
 import { SafeAreaView } from 'react-native';
 
 function HomeScreen() {
-  const Bookmarks = useBookmarks();
+  const { status } = useBookmarks();
 
   return (
     <Wrapper>
         <Title>Bookmarks</Title>
 
-        { Bookmarks.all.length === 0 && (
+        { status !== 'fulfilled' && (
           <NoBookmark />
         )}
           
         <SafeAreaView>
-          { Bookmarks.all.length > 0 && (
-            <BookmarksList bookmarks={Bookmarks.all} />
+          { status === 'fulfilled' && (
+            <BookmarksList />
           )}
         </SafeAreaView>
     </Wrapper>

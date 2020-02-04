@@ -1,3 +1,10 @@
+interface AuthProvider {
+  isLoggedIn: boolean,
+  username: string,
+  login: () => Promise,
+  logout: () => Promise
+}
+
 interface RedditToken {
   access_token: string;
   expires_in: number;
@@ -5,6 +12,23 @@ interface RedditToken {
   scope: string;
   token_type: string;
   token_date: number;
+}
+
+interface RedditResponse {
+  kind: string;
+  data: {
+    modhash: string;
+    dist: number;
+    children: RedditPost[];
+    after: string;
+    before: string;
+  },
+  error: string;
+}
+
+interface RedditPost {
+  kind: 't1' | 't2' | 't3' | 't4' | 't5' | 't6';
+  data: RedditPostData;
 }
 
 interface RedditPostData {
@@ -104,10 +128,17 @@ interface BookmarkInterface {
   kind: 'Link' | 'Comment';
   id: string;
   title: string;
-  date: number;
+  date: string;
   description: string;
   subreddit: string;
   permalink: string;
   thumbnail?: string;
   url: string;
+}
+
+interface BookmarksProvider {
+  bookmarks: BookmarkInterface[];
+  status: 'initial' | 'pending' | 'fulfilled' | 'rejected';
+  refetch: () => Promise;
+  reload: () => void;
 }

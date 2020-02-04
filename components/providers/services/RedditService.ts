@@ -2,6 +2,7 @@ import { AuthSession } from 'expo';
 import { AsyncStorage, Platform } from 'react-native';
 import credentials from './credentials';
 import { Buffer } from 'buffer';
+import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import appInfo from '../../../app.json';
 
 class RedditService {
@@ -113,7 +114,7 @@ class RedditService {
     const localBookmarks = await AsyncStorage.getItem(this.STORAGE_REDDIT_BOOKMARKS);
 
     if (!localBookmarks) {
-      return null;
+      throw 'No bookmarks';
     }
     
     return JSON.parse(localBookmarks);
@@ -137,7 +138,7 @@ class RedditService {
       }
     })
 
-    const result = await response.json();
+    const result: RedditResponse = await response.json();
 
     if (result.error) {
       console.error(result.message);
@@ -147,30 +148,20 @@ class RedditService {
     const savedPosts: BookmarkInterface[] = [];
 
     for (const post of result.data.children) {
-      const data: RedditPostData = post.data;
+      const data = post.data;
 
       let newPost: BookmarkInterface;
 
+      const date = formatDistanceToNow(data.created_utc * 1000);
+      const thumbnail = this.getPostThumbnail(post);
+
       // kind = Link
       if (post.kind === 't3') {
-        const preview: RedditPreviewInterface = data.preview;
-        // The resolution index is the middle level of compression
-        const resolutionIndex = Math.round(preview?.images[0].resolutions.length / 2);
-        const previewUrl = preview?.images[0].resolutions[resolutionIndex].url;
-
-        let thumbnail: string;
-
-        if (previewUrl) {
-          thumbnail = previewUrl;
-        } else {
-          thumbnail = data.link_url;
-        }
-
         newPost= {
           kind: 'Link',
           id: `${data.subreddit}:${data.name}`,
           title: data.title,
-          date: data.created,
+          date,
           description: data.selftext,
           subreddit: data.subreddit_name_prefixed,
           permalink: data.link_permalink,
@@ -181,17 +172,11 @@ class RedditService {
 
       // kind = Comment
       if (post.kind === 't1') {
-        let thumbnail: string;
-
-        if (data.link_url?.endsWith('.jpg') || data.link_url?.endsWith('.png')) {
-          thumbnail = data.link_url
-        }
-
         newPost = {
           kind: 'Comment',
           id: `${data.subreddit}:${data.name}`,
           title: data.link_title,
-          date: data.created,
+          date,
           description: data.selftext,
           subreddit: data.subreddit_name_prefixed,
           permalink: data.link_permalink,
@@ -209,6 +194,36 @@ class RedditService {
     );
 
     return savedPosts;
+  }
+
+  getPostThumbnail = (post: RedditPost): string | void => {
+    const data = post.data;
+    const preview = post.data.preview;
+
+    let thumbnail: string;
+
+    if (post.kind === 't3') {
+      if (
+        preview &&
+        preview.images.length > 0 &&
+        preview.images[0].resolutions.length > 0
+      ) {
+        // The resolution index is the middle level of compression
+        const resolutionIndex = Math.round(preview.images[0].resolutions.length / 2);
+        const previewUrl = preview.images[0].resolutions[resolutionIndex].url;
+        thumbnail = previewUrl;
+      } else {
+        thumbnail = preview?.images[0].source.url || data.link_url;
+      }
+    }
+
+    if (post.kind === 't1') {
+      if (data.link_url?.endsWith('.jpg') || data.link_url?.endsWith('.png')) {
+        thumbnail = data.link_url;
+      }
+    }
+
+    return thumbnail;
   }
 
 

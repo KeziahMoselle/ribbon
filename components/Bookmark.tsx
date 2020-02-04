@@ -9,7 +9,6 @@ import {
   TouchableRipple
 } from 'react-native-paper';
 import { Linking } from 'expo';
-import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
 function Bookmark({
   kind,
@@ -25,7 +24,7 @@ function Bookmark({
     <View style={styles.container}>
       <View style={styles.header}>
         <Title>{ subreddit }</Title>
-        <Caption>{ formatDistanceToNow(date * 1000) } ago</Caption>
+        <Caption>{ date } ago</Caption>
       </View>
 
       { thumbnail && (
@@ -87,6 +86,8 @@ const styles = StyleSheet.create({
     borderRadius: 8
   },
   textContent: {
+    maxHeight: 150,
+    minHeight: 50,
     elevation: 1,
     overflow: 'hidden'
   },

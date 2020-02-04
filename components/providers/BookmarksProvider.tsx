@@ -1,34 +1,17 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useContext } from 'react';
 import { useAsync } from 'react-async'
 import RedditService from './services/RedditService';
 
-const BookmarksContext = React.createContext({
-  all: null,
-  refetch: null,
-  reload: null
-});
+const BookmarksContext = React.createContext<BookmarksProvider | null>(null);
 
 function BookmarksProvider (props) {
-  const [all, setAll] = useState<BookmarkInterface[]>([])
   const {
-    data: redditPosts,
-    reload
+    data: bookmarks,
+    reload,
+    status
   } = useAsync({
     promiseFn: RedditService.bootstrapBookmarksData
   })
-
-  useEffect(() => {
-    console.log('redditPosts', redditPosts);
-    if (redditPosts) {
-      setAll([...all, ...redditPosts]);
-    } else {
-      setAll([]);
-    }
-  }, [redditPosts])
-
-  useEffect(() => {
-    console.log('reload: ', reload);
-  }, [reload])
 
   async function refetch() {
     try {
@@ -43,7 +26,8 @@ function BookmarksProvider (props) {
   return (
     <BookmarksContext.Provider
       value={{
-        all,
+        bookmarks,
+        status,
         refetch,
         reload
       }}
@@ -53,11 +37,11 @@ function BookmarksProvider (props) {
   )
 }
 
-function useBookmarks() {
+function useBookmarks(): BookmarksProvider {
   const context = useContext(BookmarksContext);
 
   if (context === undefined) {
-    throw new Error('useAuth must be used withing an AuthProvider');
+    throw new Error('useBookmarks must be used withing a BookmarksProvider');
   }
   
   return context
