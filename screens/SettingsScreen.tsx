@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../components/providers/AuthProvider';
 import { useBookmarks } from '../components/providers/BookmarksProvider';
-import { View } from 'react-native';
+import { View, AsyncStorage } from 'react-native';
+import { Notifications } from 'expo';
 import {
   Button,
   Caption
@@ -17,7 +18,16 @@ function SettingsScreen () {
   const { reload } = useBookmarks();
   const [isOpen, setIsOpen] = useState(false);
   const [isAuthLoading, SetIsAuthLoading] = useState(false);
-  const [reminder, setReminder] = useState(new Date());
+  const [reminder, setReminder] = useState(null);
+
+  useEffect(() => {
+    updateReminders();
+  }, [])
+
+  async function updateReminders() {
+    const date = await AsyncStorage.getItem('@Bookmarks:Reminders')
+    setReminder(new Date(date));
+  }
 
   async function _handleRedditClick() {
     // Loading and disable button
@@ -43,6 +53,14 @@ function SettingsScreen () {
     if (!date) return;
     // Save the reminder
     setReminder(date);
+    Notifications.scheduleLocalNotificationAsync({
+      title: 'Read a bookmark !',
+      body: 'Title of the bookmark'
+    }, {
+      time: date,
+      repeat: 'day'
+    })
+    AsyncStorage.setItem('@Bookmarks:Reminders', date.toString());
   }
 
   return (
@@ -80,7 +98,7 @@ function SettingsScreen () {
 
         {isOpen && (
           <DateTimePicker
-            value={reminder}
+            value={reminder || new Date()}
             mode="time"
             is24Hour={false}
             display="default"
