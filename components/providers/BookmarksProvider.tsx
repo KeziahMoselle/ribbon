@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { useAsync } from 'react-async'
 import RedditService from './services/RedditService';
 
@@ -7,10 +7,18 @@ const BookmarksContext = React.createContext<BookmarksProvider | null>(null);
 function BookmarksProvider (props) {
   const {
     data: bookmarks,
-    reload,
+    reload: updateBookmarks,
     status
   } = useAsync({
     promiseFn: RedditService.bootstrapBookmarksData
+  })
+
+  const {
+    data: pinnedBookmarks,
+    reload: updatePinnedBookmarks,
+    setData: setPinnedBookmarks
+  } = useAsync({
+    promiseFn: RedditService.bootstrapPinnedBookmarksData
   })
 
   async function refetch() {
@@ -19,7 +27,16 @@ function BookmarksProvider (props) {
     } catch (error) {
       console.log(error);
     } finally {
-      reload();
+      updateBookmarks();
+    }
+  }
+
+  async function addToPinnedBookmarks(index: number): Promise<void> {
+    const bookmark = bookmarks[index];
+    if (!pinnedBookmarks) {
+      setPinnedBookmarks([bookmark]);
+    } else {
+      setPinnedBookmarks([...pinnedBookmarks, bookmark]);
     }
   }
 
@@ -27,9 +44,12 @@ function BookmarksProvider (props) {
     <BookmarksContext.Provider
       value={{
         bookmarks,
+        pinnedBookmarks,
         status,
         refetch,
-        reload
+        updateBookmarks,
+        updatePinnedBookmarks,
+        addToPinnedBookmarks
       }}
     >
       {props.children}

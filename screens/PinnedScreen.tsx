@@ -11,7 +11,7 @@ function HomeScreen() {
 
   return (
     <Wrapper>
-        <Title>Bookmarks</Title>
+        <Title>Pinned Bookmarks</Title>
 
         { status !== 'fulfilled' && (
           <NoBookmark />

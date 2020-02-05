@@ -5,6 +5,7 @@ import { createMaterialBottomTabNavigator } from 'react-navigation-material-bott
 import { Feather } from '@expo/vector-icons';
 
 import HomeScreen from './screens/HomeScreen';
+import PinnedScreen from'./screens/PinnedScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import StatusBar from './components/Layout/StatusBar';
 
@@ -15,6 +16,14 @@ const TabNavigator = createMaterialBottomTabNavigator(
       navigationOptions: {
         tabBarColor: '#000',
         tabBarIcon: <Feather name="bookmark" size={20} color="#FFF" />
+      }
+    },
+    PinnedBookmarks: {
+      screen: PinnedScreen,
+      navigationOptions: {
+        title: 'Pinned',
+        tabBarColor: '#000',
+        tabBarIcon: <Feather name="star" size={20} color="#FFF" />
       }
     },
     Settings: {

@@ -9,6 +9,11 @@ import {
   TouchableRipple
 } from 'react-native-paper';
 import { Linking } from 'expo';
+import { useBookmarks } from './providers/BookmarksProvider';
+
+interface Props extends BookmarkInterface {
+  index: number;
+}
 
 function Bookmark({
   kind,
@@ -18,8 +23,11 @@ function Bookmark({
   subreddit,
   permalink,
   thumbnail,
-  url
- }: BookmarkInterface) {
+  url,
+  index
+ }: Props) {
+  const { addToPinnedBookmarks } = useBookmarks();
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -54,6 +62,7 @@ function Bookmark({
         </Chip>
 
         <Button
+          onPress={() => addToPinnedBookmarks(index)}
           mode="contained"
           color="#000"
           icon="pin-outline"

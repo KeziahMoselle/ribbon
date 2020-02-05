@@ -13,6 +13,7 @@ class RedditService {
   STORAGE_REDDIT_KEY = '@Bookmarks:RedditOAuthKey';
   STORAGE_REDDIT_USERNAME = '@Bookmarks:RedditUsername';
   STORAGE_REDDIT_BOOKMARKS = '@Bookmarks:RedditBookmarks';
+  STORAGE_REDDIT_PINNED_BOOKMARKS = '@Bookmarks:RedditPinnedBookmarks';
   USER_AGENT = `${Platform.OS}:${appInfo.expo.android.package}:${appInfo.expo.version} (by /u/${credentials.creatorUsername})`;
 
   token = null
@@ -118,6 +119,16 @@ class RedditService {
     }
     
     return JSON.parse(localBookmarks);
+  }
+
+  bootstrapPinnedBookmarksData = async () => {
+    const localPinnedBookmarks = await AsyncStorage.getItem(this.STORAGE_REDDIT_PINNED_BOOKMARKS);
+
+    if (!localPinnedBookmarks) {
+      throw 'No pinned bookmarks';
+    }
+
+    return JSON.parse(localPinnedBookmarks);
   }
 
   /**
