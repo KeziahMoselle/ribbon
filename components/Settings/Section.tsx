@@ -2,10 +2,14 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Subheading } from 'react-native-paper';
 
-function Section({ children, title }) {
+function Section({ children, title, headerChildren = null }) {
   return (
     <View style={styles.container}>
-      <Subheading style={styles.subheading}>{ title }</Subheading>
+      <View style={styles.sectionHeader}>
+        <Subheading style={styles.subheading}>{ title }</Subheading>
+        
+        { headerChildren }
+      </View>
 
       { children }
     </View>
@@ -15,6 +19,11 @@ function Section({ children, title }) {
 const styles = StyleSheet.create({
   container: {
     marginBottom: 18
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'baseline'
   },
   subheading: {
     marginBottom: 12

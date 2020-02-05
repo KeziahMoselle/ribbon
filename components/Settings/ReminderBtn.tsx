@@ -4,12 +4,20 @@ import { TouchableRipple, Text } from 'react-native-paper';
 import { Feather } from '@expo/vector-icons';
 import format from 'date-fns/format'
 
-function ReminderBtn({ onPress, reminder = null }) {
-  
+interface Props {
+  onPress: (bool: boolean) => void;
+  reminder: Date | null;
+  disabled: boolean;
+}
+
+function ReminderBtn({ onPress, reminder = null, disabled = false }: Props) {
+
+
   return (
     <TouchableRipple
       onPress={() => onPress(true)}
-      style={styles.reminderBtn}
+      style={[styles.reminderBtn, disabled ? styles.disabledStyle : null]}
+      disabled={disabled}
     >
       <View style={styles.reminderContent}>
         <Text style={styles.reminderText}>{
@@ -38,6 +46,10 @@ const styles = StyleSheet.create({
   },
   reminderText: {
     fontSize: 16
+  },
+  disabledStyle: {
+    backgroundColor: '#ACACAC',
+    opacity: 0.2
   }
 });
 
