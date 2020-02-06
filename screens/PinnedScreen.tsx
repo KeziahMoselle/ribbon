@@ -2,24 +2,24 @@ import React from 'react';
 import { useBookmarks } from '../components/providers/BookmarksProvider';
 import Wrapper from '../components/Layout/Wrapper';
 import Title from '../components/Title';
-import BookmarksList from '../components/BookmarksList';
-import NoBookmark from '../components/NoBookmark';
+import PinnedList from '../components/PinnedBookmarks/PinnedList';
+import NoPinned from '../components/PinnedBookmarks/NoPinned';
 import { SafeAreaView } from 'react-native';
 
 function HomeScreen() {
-  const { status } = useBookmarks();
+  const { pinnedStatus } = useBookmarks();
 
   return (
     <Wrapper>
         <Title>Pinned Bookmarks</Title>
 
-        { status !== 'fulfilled' && (
-          <NoBookmark />
+        { pinnedStatus !== 'fulfilled' && (
+          <NoPinned />
         )}
           
         <SafeAreaView>
-          { status === 'fulfilled' && (
-            <BookmarksList />
+          { pinnedStatus === 'fulfilled' && (
+            <PinnedList />
           )}
         </SafeAreaView>
     </Wrapper>

@@ -139,9 +139,12 @@ interface BookmarkInterface {
 interface BookmarksProvider {
   bookmarks: BookmarkInterface[];
   pinnedBookmarks: BookmarkInterface[];
-  status: 'initial' | 'pending' | 'fulfilled' | 'rejected';
+  status: PromiseStatus;
   refetch: () => Promise;
   updateBookmarks: () => void;
   updatePinnedBookmarks: () => void;
   addToPinnedBookmarks: (index: number) => Promise<Void>;
+  pinnedStatus: PromiseStatus;
 }
+
+type PromiseStatus = 'initial' | 'pending' | 'fulfilled' | 'rejected';

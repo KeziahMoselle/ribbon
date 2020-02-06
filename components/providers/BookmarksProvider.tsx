@@ -16,7 +16,8 @@ function BookmarksProvider (props) {
   const {
     data: pinnedBookmarks,
     reload: updatePinnedBookmarks,
-    setData: setPinnedBookmarks
+    setData: setPinnedBookmarks,
+    status: pinnedStatus
   } = useAsync({
     promiseFn: RedditService.bootstrapPinnedBookmarksData
   })
@@ -49,7 +50,8 @@ function BookmarksProvider (props) {
         refetch,
         updateBookmarks,
         updatePinnedBookmarks,
-        addToPinnedBookmarks
+        addToPinnedBookmarks,
+        pinnedStatus
       }}
     >
       {props.children}
