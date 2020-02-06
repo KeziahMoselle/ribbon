@@ -143,7 +143,9 @@ interface BookmarksProvider {
   refetch: () => Promise;
   updateBookmarks: () => void;
   updatePinnedBookmarks: () => void;
-  addToPinnedBookmarks: (index: number) => Promise<Void>;
+  addToPinnedBookmarks: (index: number) => void;
+  removeFromPinnedBookmarks: (id: string) => void;
+  isPinnedBookmark: (id: string) => boolean;
   pinnedStatus: PromiseStatus;
 }
 

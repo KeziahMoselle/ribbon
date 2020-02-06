@@ -7,13 +7,13 @@ import NoPinned from '../components/PinnedBookmarks/NoPinned';
 import { SafeAreaView } from 'react-native';
 
 function HomeScreen() {
-  const { pinnedStatus } = useBookmarks();
+  const { pinnedStatus, pinnedBookmarks } = useBookmarks();
 
   return (
     <Wrapper>
         <Title>Pinned Bookmarks</Title>
 
-        { pinnedStatus !== 'fulfilled' && (
+        { pinnedStatus !== 'fulfilled' || pinnedBookmarks.length === 0 && (
           <NoPinned />
         )}
           

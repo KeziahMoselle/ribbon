@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useAsync } from 'react-async'
 import RedditService from './services/RedditService';
 
@@ -22,6 +22,11 @@ function BookmarksProvider (props) {
     promiseFn: RedditService.bootstrapPinnedBookmarksData
   })
 
+  // Save pinnedBookmarks in AsyncStorage
+  useEffect(() => {
+    RedditService.savePinnedBookmarks(pinnedBookmarks);
+  }, [pinnedBookmarks]);
+
   async function refetch() {
     try {
       RedditService.fetchSavedPosts();
@@ -32,13 +37,25 @@ function BookmarksProvider (props) {
     }
   }
 
-  async function addToPinnedBookmarks(index: number): Promise<void> {
+  function addToPinnedBookmarks(index: number) {
     const bookmark = bookmarks[index];
     if (!pinnedBookmarks) {
       setPinnedBookmarks([bookmark]);
     } else {
       setPinnedBookmarks([...pinnedBookmarks, bookmark]);
     }
+  }
+
+  function removeFromPinnedBookmarks(id: string): void {
+    const filteredBookmarks = pinnedBookmarks.filter(bookmark => bookmark.id !== id);
+    setPinnedBookmarks(filteredBookmarks);
+  }
+
+  function isPinnedBookmark(id: string): boolean {
+    if (!pinnedBookmarks) return false;
+    const isPinned = pinnedBookmarks.findIndex(bookmark => bookmark.id === id);
+    if (isPinned === -1) return false;
+    if (isPinned >= 0) return true;
   }
 
   return (
@@ -51,6 +68,8 @@ function BookmarksProvider (props) {
         updateBookmarks,
         updatePinnedBookmarks,
         addToPinnedBookmarks,
+        removeFromPinnedBookmarks,
+        isPinnedBookmark,
         pinnedStatus
       }}
     >

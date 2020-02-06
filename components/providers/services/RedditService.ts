@@ -111,7 +111,7 @@ class RedditService {
    * Display bookmarks if they are found
    * Otherwise display the "NoBookmark" component
    */
-  bootstrapBookmarksData = async () => {
+  bootstrapBookmarksData = async (): Promise<BookmarkInterface[]> => {
     const localBookmarks = await AsyncStorage.getItem(this.STORAGE_REDDIT_BOOKMARKS);
 
     if (!localBookmarks) {
@@ -121,7 +121,7 @@ class RedditService {
     return JSON.parse(localBookmarks);
   }
 
-  bootstrapPinnedBookmarksData = async () => {
+  bootstrapPinnedBookmarksData = async (): Promise<BookmarkInterface[]> => {
     const localPinnedBookmarks = await AsyncStorage.getItem(this.STORAGE_REDDIT_PINNED_BOOKMARKS);
 
     if (!localPinnedBookmarks) {
@@ -129,6 +129,17 @@ class RedditService {
     }
 
     return JSON.parse(localPinnedBookmarks);
+  }
+
+  savePinnedBookmarks = async (pinnedBookmarks: BookmarkInterface[]) => {
+    try {
+      await AsyncStorage.setItem(
+        this.STORAGE_REDDIT_PINNED_BOOKMARKS,
+        JSON.stringify(pinnedBookmarks)
+      );
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   /**
@@ -246,7 +257,8 @@ class RedditService {
     await AsyncStorage.multiRemove([
       this.STORAGE_REDDIT_KEY,
       this.STORAGE_REDDIT_USERNAME,
-      this.STORAGE_REDDIT_BOOKMARKS
+      this.STORAGE_REDDIT_BOOKMARKS,
+      this.STORAGE_REDDIT_PINNED_BOOKMARKS
     ])
   }
   

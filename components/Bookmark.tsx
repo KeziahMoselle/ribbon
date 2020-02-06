@@ -16,6 +16,7 @@ interface Props extends BookmarkInterface {
 }
 
 function Bookmark({
+  id,
   kind,
   title,
   date,
@@ -26,7 +27,18 @@ function Bookmark({
   url,
   index
  }: Props) {
-  const { addToPinnedBookmarks } = useBookmarks();
+  const {
+    addToPinnedBookmarks,
+    removeFromPinnedBookmarks,
+    isPinnedBookmark
+  } = useBookmarks();
+
+  const isPinned = isPinnedBookmark(id);
+
+  function handlePinClick() {
+    if (!isPinned) return addToPinnedBookmarks(index);
+    removeFromPinnedBookmarks(id);
+  }
 
   return (
     <View style={styles.container}>
@@ -62,13 +74,16 @@ function Bookmark({
         </Chip>
 
         <Button
-          onPress={() => addToPinnedBookmarks(index)}
+          onPress={handlePinClick}
           mode="contained"
           color="#000"
           icon="pin-outline"
           contentStyle={{ height: 34 }}
         >
-          Pin
+          { isPinned
+            ? 'Unpin'
+            : 'Pin'
+          }
         </Button>
       </View>
     </View>

@@ -13,7 +13,7 @@ function NoBookmark() {
 
 
   /**
-   * Is logged in : refetch bookmarks from Reddit
+   * Is logged in : Navigate to bookmarks screen
    * If not logged in : Initiate the OAuth process
    * and refetch
    */
@@ -24,6 +24,7 @@ function NoBookmark() {
     } else {
       await login();
       await refetch();
+      navigate('Bookmarks');
     }
     setIsImportLoading(false);
   }
