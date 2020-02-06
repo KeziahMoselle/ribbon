@@ -9,7 +9,7 @@ import Section from './Section';
 
 function Services () {
   const { isLoggedIn, username, login, logout } = useAuth();
-  const { reload } = useBookmarks();
+  const { updateBookmarks } = useBookmarks();
   const [isAuthLoading, SetIsAuthLoading] = useState(false);
 
   async function _handleRedditClick() {
@@ -18,7 +18,7 @@ function Services () {
     
     if (isLoggedIn) {
       await logout();
-      reload();
+      updateBookmarks();
       // Clear loading and disable state
       SetIsAuthLoading(false);
       return

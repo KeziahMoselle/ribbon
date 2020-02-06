@@ -9,7 +9,7 @@ import {
   TouchableRipple
 } from 'react-native-paper';
 import { Linking } from 'expo';
-import { useBookmarks } from './providers/BookmarksProvider';
+import { useBookmarks } from '../providers/BookmarksProvider';
 
 interface Props extends BookmarkInterface {
   index: number;
@@ -27,18 +27,7 @@ function Bookmark({
   url,
   index
  }: Props) {
-  const {
-    addToPinnedBookmarks,
-    removeFromPinnedBookmarks,
-    isPinnedBookmark
-  } = useBookmarks();
-
-  const isPinned = isPinnedBookmark(id);
-
-  function handlePinClick() {
-    if (!isPinned) return addToPinnedBookmarks(index);
-    removeFromPinnedBookmarks(id);
-  }
+  const { removeFromPinnedBookmarks } = useBookmarks();
 
   return (
     <View style={styles.container}>
@@ -74,16 +63,13 @@ function Bookmark({
         </Chip>
 
         <Button
-          onPress={handlePinClick}
+          onPress={() => removeFromPinnedBookmarks(id)}
           mode="contained"
           color="#000"
           icon="pin-outline"
           contentStyle={{ height: 34 }}
         >
-          { isPinned
-            ? 'Unpin'
-            : 'Pin'
-          }
+          Unpin
         </Button>
       </View>
     </View>

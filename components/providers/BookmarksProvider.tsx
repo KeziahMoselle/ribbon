@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useAsync } from 'react-async'
 import RedditService from './services/RedditService';
 
@@ -7,11 +7,25 @@ const BookmarksContext = React.createContext<BookmarksProvider | null>(null);
 function BookmarksProvider (props) {
   const {
     data: bookmarks,
-    reload,
+    reload: updateBookmarks,
     status
   } = useAsync({
     promiseFn: RedditService.bootstrapBookmarksData
   })
+
+  const {
+    data: pinnedBookmarks,
+    reload: updatePinnedBookmarks,
+    setData: setPinnedBookmarks,
+    status: pinnedStatus
+  } = useAsync({
+    promiseFn: RedditService.bootstrapPinnedBookmarksData
+  })
+
+  // Save pinnedBookmarks in AsyncStorage
+  useEffect(() => {
+    RedditService.savePinnedBookmarks(pinnedBookmarks);
+  }, [pinnedBookmarks]);
 
   async function refetch() {
     try {
@@ -19,17 +33,44 @@ function BookmarksProvider (props) {
     } catch (error) {
       console.log(error);
     } finally {
-      reload();
+      updateBookmarks();
     }
+  }
+
+  function addToPinnedBookmarks(index: number) {
+    const bookmark = bookmarks[index];
+    if (!pinnedBookmarks) {
+      setPinnedBookmarks([bookmark]);
+    } else {
+      setPinnedBookmarks([...pinnedBookmarks, bookmark]);
+    }
+  }
+
+  function removeFromPinnedBookmarks(id: string): void {
+    const filteredBookmarks = pinnedBookmarks.filter(bookmark => bookmark.id !== id);
+    setPinnedBookmarks(filteredBookmarks);
+  }
+
+  function isPinnedBookmark(id: string): boolean {
+    if (!pinnedBookmarks) return false;
+    const isPinned = pinnedBookmarks.findIndex(bookmark => bookmark.id === id);
+    if (isPinned === -1) return false;
+    if (isPinned >= 0) return true;
   }
 
   return (
     <BookmarksContext.Provider
       value={{
         bookmarks,
+        pinnedBookmarks,
         status,
         refetch,
-        reload
+        updateBookmarks,
+        updatePinnedBookmarks,
+        addToPinnedBookmarks,
+        removeFromPinnedBookmarks,
+        isPinnedBookmark,
+        pinnedStatus
       }}
     >
       {props.children}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FlatList } from 'react-native';
 import { useBookmarks } from './providers/BookmarksProvider';
 import Bookmark from './Bookmark';
@@ -21,8 +21,8 @@ function BookmarksList() {
   return (
     <FlatList
       data={bookmarks}
-      renderItem={({ item }) => (
-        <Bookmark {...item} />
+      renderItem={({ item, index }) => (
+        <Bookmark {...item} index={index} />
       )}
       keyExtractor={bookmark => String(bookmark.id)}
       refreshing={isRefreshing}
