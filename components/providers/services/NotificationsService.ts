@@ -100,13 +100,16 @@ class NotificationsService {
   /**
    * Queue a new notification when a pinned bookmark has been added
    */
-  queueNotification = async (pinnedBookmark: BookmarkInterface) => {
+  queueNotification = async (title) => {
     const date = await this.getNotificationsHour();
 
     const notification = {
       title: 'Read this bookmark if you have some spare time !',
-      body: pinnedBookmark.title
+      body: title
     }
+
+    console.log(notification);
+    console.log(date);
 
     await Notifications.scheduleLocalNotificationAsync(notification, {
       time: date

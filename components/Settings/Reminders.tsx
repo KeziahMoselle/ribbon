@@ -17,6 +17,11 @@ function Reminders () {
     updateReminder
   } = useNotifications();
 
+  function onDateTimePickerChange(event, date: Date) {
+    updateReminder(event, date);
+    setIsOpen(false);
+  }
+
   return (
     <Section
       title="Reminders"
@@ -44,7 +49,7 @@ function Reminders () {
           mode="time"
           is24Hour={false}
           display="default"
-          onChange={updateReminder}
+          onChange={onDateTimePickerChange}
         />
       )}
 
