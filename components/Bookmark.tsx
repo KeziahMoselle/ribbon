@@ -10,6 +10,7 @@ import {
 } from 'react-native-paper';
 import { Linking } from 'expo';
 import { useBookmarks } from './providers/BookmarksProvider';
+import useNotifications from './providers/hooks/useNotifications';
 
 interface Props extends BookmarkInterface {
   index: number;
@@ -33,11 +34,27 @@ function Bookmark({
     isPinnedBookmark
   } = useBookmarks();
 
+  const {
+    queueNotification,
+    isNotificationsEnabled,
+    removeFromNotificationQueue
+  } = useNotifications();
+
   const isPinned = isPinnedBookmark(id);
 
   function handlePinClick() {
-    if (!isPinned) return addToPinnedBookmarks(index);
-    removeFromPinnedBookmarks(id);
+    if (isPinned) {
+      removeFromNotificationQueue(id);
+      return removeFromPinnedBookmarks(id);
+    }
+    addToPinnedBookmarks(index);
+    
+    if (!isNotificationsEnabled) return;
+    queueNotification({
+      id,
+      body: title || permalink,
+      permalink
+    });
   }
 
   return (

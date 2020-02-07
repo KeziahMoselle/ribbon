@@ -27,6 +27,11 @@ function BookmarksProvider (props) {
     RedditService.savePinnedBookmarks(pinnedBookmarks);
   }, [pinnedBookmarks]);
 
+
+  /**
+   * Invoked by Pull to refresh or "Import" btn
+   * It will refetch saved posts and update the UI
+   */
   async function refetch() {
     try {
       RedditService.fetchSavedPosts();
@@ -37,6 +42,10 @@ function BookmarksProvider (props) {
     }
   }
 
+
+  /**
+   * Add the bookmark 
+   */
   function addToPinnedBookmarks(index: number) {
     const bookmark = bookmarks[index];
     if (!pinnedBookmarks) {
