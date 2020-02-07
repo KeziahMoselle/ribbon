@@ -11,7 +11,7 @@ class NotificationsService {
    * - Fetch the notification queue
    */
   constructor() {
-    this.getNotificationsQueue();
+    this._getNotificationsQueue();
   }
 
   STORAGE_NOTIFICATIONS_ENABLED_KEY = '@Bookmarks:NotificationsEnabled';
@@ -76,15 +76,24 @@ class NotificationsService {
   /**
    * Get the notification queue
    */
-  getNotificationsQueue = async () => {
+  _getNotificationsQueue = async () => {
     const localNotificationsQueue = await AsyncStorage.getItem(this.STORAGE_NOTIFICATIONS_QUEUE_KEY);
     
     if (!localNotificationsQueue) {
       return null;
     }
 
-    const queue = JSON.parse(localNotificationsQueue);
-    this.notificationsQueue = queue
+    const queue: NotificationQueueItem[] = JSON.parse(localNotificationsQueue);
+
+    // Remove old notifications
+    const filteredQueue = queue.filter(notification => {
+      const notificationDate = new Date(notification.time);
+      if (notificationDate < new Date()) return false;
+      return true;
+    })
+
+    this.notificationsQueue = filteredQueue;
+    this.setNotificationQueue(filteredQueue);
     return queue;
   }
 
