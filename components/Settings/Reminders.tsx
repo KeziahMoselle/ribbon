@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, AsyncStorage } from 'react-native';
+import React, { useState } from 'react';
+import { View } from 'react-native';
 import useNotifications from '../providers/hooks/useNotifications';
 import { Switch } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -7,6 +7,15 @@ import Section from './Section';
 import ReminderBtn from './ReminderBtn';
 
 function Reminders () {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const {
+    isNotificationsEnabled,
+    setIsNotificationsEnabled,
+    isPermissionAllowed,
+    reminder,
+    updateReminder
+  } = useNotifications();
 
   return (
     <Section
