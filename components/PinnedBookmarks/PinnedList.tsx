@@ -6,10 +6,6 @@ import PinnedBookmark from './PinnedBookmark';
 function BookmarksList() {
   const { pinnedBookmarks } = useBookmarks();
 
-  useEffect(() => {
-    console.log(pinnedBookmarks);
-  }, [pinnedBookmarks])
-
   return (
     <FlatList
       data={pinnedBookmarks}

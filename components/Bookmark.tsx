@@ -34,14 +34,23 @@ function Bookmark({
     isPinnedBookmark
   } = useBookmarks();
 
-  const { queueNotification } = useNotifications();
+  const {
+    queueNotification,
+    isNotificationsEnabled,
+    removeFromNotificationQueue
+  } = useNotifications();
 
   const isPinned = isPinnedBookmark(id);
 
   function handlePinClick() {
-    if (isPinned) return removeFromPinnedBookmarks(id);
+    if (isPinned) {
+      removeFromNotificationQueue(id);
+      return removeFromPinnedBookmarks(id);
+    }
     addToPinnedBookmarks(index);
-    queueNotification(title);
+    
+    if (!isNotificationsEnabled) return;
+    queueNotification(id, title);
   }
 
   return (

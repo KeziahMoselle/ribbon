@@ -150,3 +150,11 @@ interface BookmarksProvider {
 }
 
 type PromiseStatus = 'initial' | 'pending' | 'fulfilled' | 'rejected';
+
+interface NotificationQueueItem {
+  id: string;
+  title: string;
+  body: string;
+  time: date | number;
+  notificationId?: React.ReactText;
+}

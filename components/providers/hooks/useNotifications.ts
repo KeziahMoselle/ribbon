@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import NotificationsService from '../services/NotificationsService';
 
 function useNotifications() {
-  const [isNotificationsEnabled, setIsNotificationsEnabled] = useState(false);
-  const [isPermissionAllowed, setIsPermissionAllowed] = useState(false);
+  const [isNotificationsEnabled, setIsNotificationsEnabled] = useState(true);
+  const [isPermissionAllowed, setIsPermissionAllowed] = useState(true);
   const [reminder, setReminder] = useState(null);
 
   useEffect(() => {
@@ -16,6 +16,12 @@ function useNotifications() {
     NotificationsService.setNotificationsEnabled(isNotificationsEnabled);
   }, [isNotificationsEnabled]);
 
+  useEffect(() => {
+    if (isNotificationsEnabled && !isPermissionAllowed) {
+      setIsNotificationsEnabled(false);
+      alert('You need to allow notifications !');
+    }
+  }, [isNotificationsEnabled, isPermissionAllowed]);
 
   /**
    * Update `isNotificationsEnabled` state
@@ -72,7 +78,8 @@ function useNotifications() {
     isPermissionAllowed,
     reminder,
     updateReminder,
-    queueNotification: NotificationsService.queueNotification
+    queueNotification: NotificationsService.queueNotification,
+    removeFromNotificationQueue: NotificationsService.removeFromNotificationQueue
   };
 }
 

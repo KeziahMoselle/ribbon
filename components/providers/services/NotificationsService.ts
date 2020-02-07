@@ -20,7 +20,7 @@ class NotificationsService {
   STORAGE_NOTIFICATIONS_QUEUE_KEY = '@Bookmarks:NotificationsQueue';
 
   notificationsHour = null;
-  notificationsQueue = [];
+  notificationsQueue: NotificationQueueItem[] = [];
   
 
   /**
@@ -95,25 +95,67 @@ class NotificationsService {
     this.notificationsQueue = queue
     return queue;
   }
+
+
+  /**
+   * Set a new value for the notification queue in AsyncStorage
+   */
+  setNotificationQueue = async (newQueue) => {
+    await AsyncStorage.setItem(
+      this.STORAGE_NOTIFICATIONS_QUEUE_KEY,
+      JSON.stringify(newQueue)
+    );
+  }
+
+
+  /**
+   * Remove the notification from the queue
+   * Set the new array in AsyncStorage
+   */
+  removeFromNotificationQueue = async (id: string) => {
+    // Find the index to get the notificationId
+    const notificationIndex = this.notificationsQueue.findIndex(
+      notification => notification.id === id
+    )
+    const notificationId = this.notificationsQueue[notificationIndex].notificationId;
+
+    // Remove the notification from the queue
+    const filteredQueue = this.notificationsQueue.filter(
+      notification => notification.id !== id
+    );
+    // Remove the notification from the OS
+    await Notifications.dismissNotificationAsync(notificationId);
+
+    // Update
+    this.notificationsQueue = filteredQueue;
+    this.setNotificationQueue(this.notificationsQueue);
+  }
   
 
   /**
    * Queue a new notification when a pinned bookmark has been added
    */
-  queueNotification = async (title) => {
-    const date = await this.getNotificationsHour();
+  queueNotification = async (id, body) => {
+    const time = await this.getNotificationsHour();
 
-    const notification = {
+    const notification: NotificationQueueItem = {
+      id,
       title: 'Read this bookmark if you have some spare time !',
-      body: title
+      body,
+      time
     }
 
-    console.log(notification);
-    console.log(date);
-
-    await Notifications.scheduleLocalNotificationAsync(notification, {
-      time: date
+    const notificationId = await Notifications.scheduleLocalNotificationAsync({
+      title: notification.title,
+      body: notification.body
     });
+
+    this.notificationsQueue.push({
+      ...notification,
+      notificationId
+    });
+    
+    this.setNotificationQueue(this.notificationsQueue);
   }
 }
 
