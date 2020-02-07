@@ -155,6 +155,7 @@ interface NotificationQueueItem {
   id: string;
   title: string;
   body: string;
+  permalink: string;
   time: date | number;
   notificationId?: React.ReactText;
 }

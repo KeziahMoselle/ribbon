@@ -50,7 +50,11 @@ function Bookmark({
     addToPinnedBookmarks(index);
     
     if (!isNotificationsEnabled) return;
-    queueNotification(id, title);
+    queueNotification({
+      id,
+      body: title || permalink,
+      permalink
+    });
   }
 
   return (

@@ -11,7 +11,6 @@ class NotificationsService {
    * - Fetch the notification queue
    */
   constructor() {
-    Notifications.addListener(this.listener);
     this.getNotificationsQueue();
   }
 
@@ -22,13 +21,6 @@ class NotificationsService {
   notificationsHour = null;
   notificationsQueue: NotificationQueueItem[] = [];
   
-
-  /**
-   * Listener for notifications actions
-   */
-  listener = (notification) => {
-    console.log(notification);
-  }
 
   getNotificationsEnabled = async (): Promise<boolean> => {
     const isEnabled = await AsyncStorage.getItem(this.STORAGE_NOTIFICATIONS_ENABLED_KEY);
@@ -135,19 +127,25 @@ class NotificationsService {
   /**
    * Queue a new notification when a pinned bookmark has been added
    */
-  queueNotification = async (id, body) => {
+  queueNotification = async ({ id, body, permalink }) => {
     const time = await this.getNotificationsHour();
 
     const notification: NotificationQueueItem = {
       id,
       title: 'Read this bookmark if you have some spare time !',
       body,
+      permalink,
       time
     }
 
     const notificationId = await Notifications.scheduleLocalNotificationAsync({
       title: notification.title,
-      body: notification.body
+      body: notification.body,
+      android: {
+        link: notification.permalink
+      }
+    }, {
+      time: notification.time
     });
 
     this.notificationsQueue.push({
