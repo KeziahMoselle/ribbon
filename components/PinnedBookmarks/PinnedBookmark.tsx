@@ -10,6 +10,7 @@ import {
 } from 'react-native-paper';
 import { Linking } from 'expo';
 import { useBookmarks } from '../providers/BookmarksProvider';
+import useNotifications from '../providers/hooks/useNotifications';
 
 interface Props extends BookmarkInterface {
   index: number;
@@ -28,6 +29,12 @@ function Bookmark({
   index
  }: Props) {
   const { removeFromPinnedBookmarks } = useBookmarks();
+  const { removeFromNotificationQueue } = useNotifications();
+
+  function handleUnpinClick() {
+    removeFromPinnedBookmarks(id);
+    removeFromNotificationQueue(id);
+  }
 
   return (
     <View style={styles.container}>
@@ -63,7 +70,7 @@ function Bookmark({
         </Chip>
 
         <Button
-          onPress={() => removeFromPinnedBookmarks(id)}
+          onPress={handleUnpinClick}
           mode="contained"
           color="#000"
           icon="pin-outline"

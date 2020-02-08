@@ -2,6 +2,7 @@ import { Notifications } from 'expo';
 import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
 import { AsyncStorage } from 'react-native';
+import { set } from 'date-fns';
 
 class NotificationsService {
 
@@ -129,7 +130,7 @@ class NotificationsService {
 
     // Update
     this.notificationsQueue = filteredQueue;
-    this.setNotificationQueue(this.notificationsQueue);
+    await this.setNotificationQueue(filteredQueue);
   }
   
 
@@ -137,8 +138,30 @@ class NotificationsService {
    * Queue a new notification when a pinned bookmark has been added
    */
   queueNotification = async ({ id, body, permalink }) => {
-    const time = await this.getNotificationsHour();
+    const datePreferences = await this.getNotificationsHour();
+    if (!datePreferences) return;
 
+    let time = null;
+    const currentDate = new Date();
+
+    if (this.notificationsQueue.length === 0) {
+      // update to the next day from now
+      time = set(currentDate, {
+        date: currentDate.getDate() + 1,
+        hours: datePreferences.getHours(),
+        minutes: datePreferences.getMinutes()
+      })
+    } else {
+      const lastNotification = this.notificationsQueue[this.notificationsQueue.length - 1];
+      const lastNotificationTime = new Date(lastNotification.time);
+      // Update to the next day from the last scheduled notifications
+      time = set(currentDate, {
+        date: lastNotificationTime.getDate() + 1,
+        hours: datePreferences.getHours(),
+        minutes: datePreferences.getMinutes()
+      })
+    }
+    
     const notification: NotificationQueueItem = {
       id,
       title: 'Read this bookmark if you have some spare time !',
@@ -162,7 +185,24 @@ class NotificationsService {
       notificationId
     });
     
-    this.setNotificationQueue(this.notificationsQueue);
+    await this.setNotificationQueue(this.notificationsQueue);
+  }
+
+  /**
+   * Cancel all scheduled notifications
+   * Remove all the keys related to NotificationsService
+   * from AsyncStorage
+   */
+  clearStorage = async () => {
+    await Notifications.cancelAllScheduledNotificationsAsync()
+
+    await AsyncStorage.multiRemove([
+      this.STORAGE_NOTIFICATIONS_ENABLED_KEY,
+      this.STORAGE_NOTIFICATIONS_HOUR_KEY,
+      this.STORAGE_NOTIFICATIONS_QUEUE_KEY
+    ])
+
+    this.notificationsQueue = [];
   }
 }
 

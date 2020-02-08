@@ -79,7 +79,8 @@ function useNotifications() {
     reminder,
     updateReminder,
     queueNotification: NotificationsService.queueNotification,
-    removeFromNotificationQueue: NotificationsService.removeFromNotificationQueue
+    removeFromNotificationQueue: NotificationsService.removeFromNotificationQueue,
+    clearNotifications: NotificationsService.clearStorage
   };
 }
 

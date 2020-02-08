@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { TouchableRipple, Text } from 'react-native-paper';
 import { Feather } from '@expo/vector-icons';
-import format from 'date-fns/format'
+import { format } from 'date-fns'
 
 interface Props {
   onPress: (bool: boolean) => void;

@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
 import { useAuth } from '../providers/AuthProvider';
 import { useBookmarks } from '../providers/BookmarksProvider';
+import useNotifications from '../providers/hooks/useNotifications';
 import {
   Button,
   Caption
 } from 'react-native-paper';
 import Section from './Section';
 
+
 function Services () {
   const { isLoggedIn, username, login, logout } = useAuth();
   const { updateBookmarks } = useBookmarks();
+  const { clearNotifications } = useNotifications();
   const [isAuthLoading, SetIsAuthLoading] = useState(false);
 
   async function _handleRedditClick() {
@@ -19,6 +22,7 @@ function Services () {
     if (isLoggedIn) {
       await logout();
       updateBookmarks();
+      clearNotifications();
       // Clear loading and disable state
       SetIsAuthLoading(false);
       return

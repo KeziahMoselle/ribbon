@@ -2,7 +2,7 @@ import { AuthSession } from 'expo';
 import { AsyncStorage, Platform } from 'react-native';
 import credentials from './credentials';
 import { Buffer } from 'buffer';
-import formatDistanceToNow from 'date-fns/formatDistanceToNow';
+import { formatDistanceToNow } from 'date-fns';
 import appInfo from '../../../app.json';
 
 class RedditService {
