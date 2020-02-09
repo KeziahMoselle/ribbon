@@ -29,6 +29,7 @@ function Services () {
     }
 
     await login();
+    await updateBookmarks();
     // Clear loading and disable state
     SetIsAuthLoading(false);
   }

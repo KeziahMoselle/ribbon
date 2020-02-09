@@ -181,7 +181,7 @@ class RedditService {
       if (post.kind === 't3') {
         newPost= {
           kind: 'Link',
-          id: `${data.subreddit}:${data.name}`,
+          id: data.name,
           title: data.title,
           date,
           description: data.selftext,
@@ -196,7 +196,7 @@ class RedditService {
       if (post.kind === 't1') {
         newPost = {
           kind: 'Comment',
-          id: `${data.subreddit}:${data.name}`,
+          id: data.name,
           title: data.link_title,
           date,
           description: data.selftext,
@@ -246,6 +246,14 @@ class RedditService {
     }
 
     return thumbnail;
+  }
+
+
+  /**
+   * Unsave a bookmark from Reddit
+   */
+  unsavePost = async (bookmark: BookmarkInterface) => {
+
   }
 
 

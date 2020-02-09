@@ -198,7 +198,6 @@ class NotificationsService {
 
     await AsyncStorage.multiRemove([
       this.STORAGE_NOTIFICATIONS_ENABLED_KEY,
-      this.STORAGE_NOTIFICATIONS_HOUR_KEY,
       this.STORAGE_NOTIFICATIONS_QUEUE_KEY
     ])
 
