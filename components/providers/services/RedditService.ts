@@ -252,8 +252,23 @@ class RedditService {
   /**
    * Unsave a bookmark from Reddit
    */
-  unsavePost = async (bookmark: BookmarkInterface) => {
+  unsavePost = async (id: string) => {
+    const token = await this._getToken();
 
+    const url = `https://oauth.reddit.com/api/unsave`;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `bearer ${token.access_token}`,
+        'User-Agent': this.USER_AGENT
+      },
+      body: `id=${id}`
+    })
+
+    const result = await response.json();
+
+    console.log(result);
   }
 
 
@@ -286,7 +301,7 @@ class RedditService {
       `&state=${state}` +
       `&redirect_uri=${encodeURIComponent(this.REDIRECT_URL)}` +
       `&duration=permanent` +
-      `&scope=${encodeURIComponent(`history identity`)}`
+      `&scope=${encodeURIComponent(`history identity save`)}`
     )
   }
 
