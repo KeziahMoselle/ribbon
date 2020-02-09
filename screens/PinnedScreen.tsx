@@ -13,7 +13,7 @@ function HomeScreen() {
     <Wrapper>
         <Title>Pinned Bookmarks</Title>
 
-        { pinnedStatus !== 'fulfilled' || pinnedBookmarks.length === 0 && (
+        { (pinnedStatus !== 'fulfilled' || pinnedBookmarks.length === 0) && (
           <NoPinned />
         )}
           
