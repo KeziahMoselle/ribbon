@@ -9,8 +9,7 @@ import {
   TouchableRipple
 } from 'react-native-paper';
 import { Linking } from 'expo';
-import { useBookmarks } from '../providers/BookmarksProvider';
-import useNotifications from '../providers/hooks/useNotifications';
+import usePinnedBookmarks from '../providers/hooks/usePinnedBookmarks';
 
 interface Props extends BookmarkInterface {
   index: number;
@@ -25,16 +24,9 @@ function Bookmark({
   subreddit,
   permalink,
   thumbnail,
-  url,
-  index
+  url
  }: Props) {
-  const { removeFromPinnedBookmarks } = useBookmarks();
-  const { removeFromNotificationQueue } = useNotifications();
-
-  function handleUnpinClick() {
-    removeFromPinnedBookmarks(id);
-    removeFromNotificationQueue(id);
-  }
+  const { handleUnpinClick } = usePinnedBookmarks({ id });
 
   return (
     <View style={styles.container}>
