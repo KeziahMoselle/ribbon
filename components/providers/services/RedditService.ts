@@ -265,8 +265,7 @@ class RedditService {
   unsavePost = async (id: string) => {
     const token = await this._getToken();
 
-    const url = `https://oauth.reddit.com/unsave`;
-    const body = `id=${id}`;
+    const url = `https://oauth.reddit.com/api/unsave`;
 
     const response = await fetch(url, {
       method: 'POST',
@@ -275,12 +274,13 @@ class RedditService {
         'User-Agent': this.USER_AGENT,
         'Content-Type': 'application/x-www-form-urlencoded'
       },
-      body
+      body: `id=${id}`
     })
 
     const result = await response.json();
 
-    console.log(result);
+    if (result.error) throw result;
+    return true;
   }
 
 

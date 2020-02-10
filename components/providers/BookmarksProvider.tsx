@@ -74,17 +74,17 @@ function BookmarksProvider (props) {
 
   async function unsaveBookmark(id: string) {
     try {
-      // Remove in pinned bookmarks if it's there
-      if (isPinnedBookmark(id)) {
-        console.log('isPinnedBookmarks:', id);
-        //removeFromPinnedBookmarks(id);
-      }
-      // Remove from bookmarks
-      //await removeFromBookmarks(id);
       // Remove from Reddit
       await RedditService.unsavePost(id);
+
+      // Remove in pinned bookmarks if it's there
+      if (isPinnedBookmark(id)) {
+        removeFromPinnedBookmarks(id);
+      }
+      // Remove from bookmarks
+      await removeFromBookmarks(id);
     } catch (error) {
-      console.log(error);
+      alert(`Error when unsaving post. (${error.error}: ${error.message})`);
     }
   }
 
