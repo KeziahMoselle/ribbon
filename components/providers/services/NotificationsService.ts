@@ -93,7 +93,6 @@ class NotificationsService {
       return true;
     })
 
-    this.notificationsQueue = filteredQueue;
     this.setNotificationQueue(filteredQueue);
     return queue;
   }
@@ -103,6 +102,8 @@ class NotificationsService {
    * Set a new value for the notification queue in AsyncStorage
    */
   setNotificationQueue = async (newQueue) => {
+    this.notificationsQueue = newQueue;
+
     await AsyncStorage.setItem(
       this.STORAGE_NOTIFICATIONS_QUEUE_KEY,
       JSON.stringify(newQueue)
@@ -119,8 +120,8 @@ class NotificationsService {
     const notificationIndex = this.notificationsQueue.findIndex(
       notification => notification.id === id
     )
+    
     const notificationId = this.notificationsQueue[notificationIndex].notificationId;
-
     // Remove the notification from the queue
     const filteredQueue = this.notificationsQueue.filter(
       notification => notification.id !== id
@@ -129,7 +130,6 @@ class NotificationsService {
     await Notifications.dismissNotificationAsync(notificationId);
 
     // Update
-    this.notificationsQueue = filteredQueue;
     await this.setNotificationQueue(filteredQueue);
   }
   
