@@ -9,8 +9,8 @@ import {
   TouchableRipple
 } from 'react-native-paper';
 import { Linking } from 'expo';
+import usePinnedBookmarks from './providers/hooks/usePinnedBookmarks';
 import { useBookmarks } from './providers/BookmarksProvider';
-import useNotifications from './providers/hooks/useNotifications';
 
 interface Props extends BookmarkInterface {
   index: number;
@@ -28,34 +28,14 @@ function Bookmark({
   url,
   index
  }: Props) {
-  const {
-    addToPinnedBookmarks,
-    removeFromPinnedBookmarks,
-    isPinnedBookmark
-  } = useBookmarks();
+   const { isPinned, handlePinClick } = usePinnedBookmarks({
+     id,
+     index,
+     title,
+     permalink
+   });
 
-  const {
-    queueNotification,
-    isNotificationsEnabled,
-    removeFromNotificationQueue
-  } = useNotifications();
-
-  const isPinned = isPinnedBookmark(id);
-
-  function handlePinClick() {
-    if (isPinned) {
-      removeFromNotificationQueue(id);
-      return removeFromPinnedBookmarks(id);
-    }
-    addToPinnedBookmarks(index);
-    
-    if (!isNotificationsEnabled) return;
-    queueNotification({
-      id,
-      body: title || permalink,
-      permalink
-    });
-  }
+   const { unsaveBookmark } = useBookmarks();
 
   return (
     <View style={styles.container}>
@@ -89,6 +69,16 @@ function Bookmark({
         >
           { kind }
         </Chip>
+
+        <Button
+          onPress={() => unsaveBookmark(id)}
+          mode="contained"
+          color="#000"
+          icon="pin-outline"
+          contentStyle={{ height: 34 }}
+        >
+          Unsave
+        </Button>
 
         <Button
           onPress={handlePinClick}

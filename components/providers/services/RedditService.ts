@@ -142,6 +142,17 @@ class RedditService {
     }
   }
 
+  saveBookmarks = async (bookmarks: BookmarkInterface[]) => {
+    try {
+      await AsyncStorage.setItem(
+        this.STORAGE_REDDIT_BOOKMARKS,
+        JSON.stringify(bookmarks)
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   /**
    * It will fetch saved posts from Reddit
    * and store them
@@ -248,12 +259,28 @@ class RedditService {
     return thumbnail;
   }
 
-
   /**
    * Unsave a bookmark from Reddit
    */
-  unsavePost = async (bookmark: BookmarkInterface) => {
+  unsavePost = async (id: string) => {
+    const token = await this._getToken();
 
+    const url = `https://oauth.reddit.com/api/unsave`;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `bearer ${token.access_token}`,
+        'User-Agent': this.USER_AGENT,
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: `id=${id}`
+    })
+
+    const result = await response.json();
+
+    if (result.error) throw result;
+    return true;
   }
 
 
@@ -286,7 +313,7 @@ class RedditService {
       `&state=${state}` +
       `&redirect_uri=${encodeURIComponent(this.REDIRECT_URL)}` +
       `&duration=permanent` +
-      `&scope=${encodeURIComponent(`history identity`)}`
+      `&scope=${encodeURIComponent(`history identity save`)}`
     )
   }
 
