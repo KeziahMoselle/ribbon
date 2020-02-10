@@ -10,6 +10,7 @@ import {
 } from 'react-native-paper';
 import { Linking } from 'expo';
 import usePinnedBookmarks from './providers/hooks/usePinnedBookmarks';
+import { useBookmarks } from './providers/BookmarksProvider';
 
 interface Props extends BookmarkInterface {
   index: number;
@@ -33,6 +34,8 @@ function Bookmark({
      title,
      permalink
    });
+
+   const { unsaveBookmark } = useBookmarks();
 
   return (
     <View style={styles.container}>
@@ -66,6 +69,16 @@ function Bookmark({
         >
           { kind }
         </Chip>
+
+        <Button
+          onPress={() => unsaveBookmark(id)}
+          mode="contained"
+          color="#000"
+          icon="pin-outline"
+          contentStyle={{ height: 34 }}
+        >
+          Unsave
+        </Button>
 
         <Button
           onPress={handlePinClick}

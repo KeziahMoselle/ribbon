@@ -8,6 +8,7 @@ function BookmarksProvider (props) {
   const {
     data: bookmarks,
     reload: updateBookmarks,
+    setData: setBookmarks,
     status
   } = useAsync({
     promiseFn: RedditService.bootstrapBookmarksData
@@ -26,6 +27,10 @@ function BookmarksProvider (props) {
   useEffect(() => {
     RedditService.savePinnedBookmarks(pinnedBookmarks);
   }, [pinnedBookmarks]);
+
+  useEffect(() => {
+    RedditService.saveBookmarks(bookmarks);
+  }, [bookmarks]);
 
 
   /**
@@ -67,6 +72,27 @@ function BookmarksProvider (props) {
     if (isPinned >= 0) return true;
   }
 
+  async function unsaveBookmark(id: string) {
+    try {
+      // Remove in pinned bookmarks if it's there
+      if (isPinnedBookmark(id)) {
+        console.log('isPinnedBookmarks:', id);
+        //removeFromPinnedBookmarks(id);
+      }
+      // Remove from bookmarks
+      //await removeFromBookmarks(id);
+      // Remove from Reddit
+      await RedditService.unsavePost(id);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function removeFromBookmarks(id: string) {
+    const filteredBookmarks = bookmarks.filter(bookmark => bookmark.id !== id);
+    setBookmarks(filteredBookmarks);
+  }
+
   return (
     <BookmarksContext.Provider
       value={{
@@ -79,7 +105,8 @@ function BookmarksProvider (props) {
         addToPinnedBookmarks,
         removeFromPinnedBookmarks,
         isPinnedBookmark,
-        pinnedStatus
+        pinnedStatus,
+        unsaveBookmark
       }}
     >
       {props.children}

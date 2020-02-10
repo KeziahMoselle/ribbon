@@ -28,7 +28,6 @@ function useNotifications() {
    */
   async function _getIsNotificationEnabled() {
     const isEnabled = await NotificationsService.getNotificationsEnabled();
-    console.log('Notifications is enabled :', isEnabled);
     setIsNotificationsEnabled(isEnabled);
   }
 

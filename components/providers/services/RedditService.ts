@@ -142,6 +142,17 @@ class RedditService {
     }
   }
 
+  saveBookmarks = async (bookmarks: BookmarkInterface[]) => {
+    try {
+      await AsyncStorage.setItem(
+        this.STORAGE_REDDIT_BOOKMARKS,
+        JSON.stringify(bookmarks)
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   /**
    * It will fetch saved posts from Reddit
    * and store them
@@ -248,22 +259,23 @@ class RedditService {
     return thumbnail;
   }
 
-
   /**
    * Unsave a bookmark from Reddit
    */
   unsavePost = async (id: string) => {
     const token = await this._getToken();
 
-    const url = `https://oauth.reddit.com/api/unsave`;
+    const url = `https://oauth.reddit.com/unsave`;
+    const body = `id=${id}`;
 
     const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Authorization': `bearer ${token.access_token}`,
-        'User-Agent': this.USER_AGENT
+        'User-Agent': this.USER_AGENT,
+        'Content-Type': 'application/x-www-form-urlencoded'
       },
-      body: `id=${id}`
+      body
     })
 
     const result = await response.json();
