@@ -31,6 +31,22 @@ const styles = StyleSheet.create({
     maxHeight: 150,
     minHeight: 50,
     overflow: 'hidden'
+  },
+  leftAction: {
+    justifyContent: 'center',
+    flex: 0.5,
+    marginRight: 20
+  },
+  leftActionBtn: {
+    backgroundColor: '#000'
+  },
+  rightAction: {
+    justifyContent: 'center',
+    flex: 0.5,
+    marginLeft: 20
+  },
+  rightActionBtn: {
+    backgroundColor: '#F56565'
   }
 })
 
