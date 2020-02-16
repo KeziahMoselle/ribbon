@@ -148,6 +148,7 @@ interface BookmarksProvider {
   isPinnedBookmark: (id: string) => boolean;
   pinnedStatus: PromiseStatus;
   unsaveBookmark: (id: string) => Promise<void>;
+  isUpdatingBookmarks: boolean;
 }
 
 type PromiseStatus = 'initial' | 'pending' | 'fulfilled' | 'rejected';

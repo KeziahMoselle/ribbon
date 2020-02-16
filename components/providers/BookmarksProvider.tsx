@@ -1,14 +1,18 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useAsync } from 'react-async'
 import RedditService from './services/RedditService';
 
 const BookmarksContext = React.createContext<BookmarksProvider | null>(null);
 
 function BookmarksProvider (props) {
+  const [isUpdatingBookmarks, setIsUpdatingBookmarks] = useState(false);
+  const [isUpdatingFinished, setIsUpdatingFinished] = useState(false);
+
   const {
     data: bookmarks,
     reload: updateBookmarks,
     setData: setBookmarks,
+    isFulfilled,
     status
   } = useAsync({
     promiseFn: RedditService.bootstrapBookmarksData
@@ -32,6 +36,12 @@ function BookmarksProvider (props) {
     RedditService.saveBookmarks(bookmarks);
   }, [bookmarks]);
 
+  // Updating bookmarks at launch
+  /* useEffect(() => {
+    if (isFulfilled && !isUpdatingFinished) {
+      refetch();
+    }
+  }, [isFulfilled]) */
 
   /**
    * Invoked by Pull to refresh or "Import" btn
@@ -39,11 +49,14 @@ function BookmarksProvider (props) {
    */
   async function refetch() {
     try {
-      RedditService.fetchSavedPosts();
+      setIsUpdatingBookmarks(true);
+      await RedditService.fetchSavedPosts();
     } catch (error) {
       console.log(error);
     } finally {
+      setIsUpdatingBookmarks(false);
       updateBookmarks();
+      setIsUpdatingFinished(true);
     }
   }
 
@@ -106,7 +119,8 @@ function BookmarksProvider (props) {
         removeFromPinnedBookmarks,
         isPinnedBookmark,
         pinnedStatus,
-        unsaveBookmark
+        unsaveBookmark,
+        isUpdatingBookmarks
       }}
     >
       {props.children}

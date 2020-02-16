@@ -46,7 +46,7 @@ class RedditService {
       
       return token
     } catch (error) {
-      console.error(error);
+      console.log('SignIn:', error);
     }
   }
 
@@ -87,13 +87,23 @@ class RedditService {
         username: null
       }
     }
-  
+    
+    const now = Date.now();
+    const AN_HOUR_MS = 3600 * 1000;
     console.log(`Token age: (${(now - token.token_date) / 1000 / 60} minutes)`)
-  
+    
     // Token expired 1 hour
-    if (now - token.token_date >= 3600 * 1000) {
+    if (now - token.token_date >= AN_HOUR_MS) {
       console.log(`Token refreshing 🔄 (${(now - token.token_date) / 1000 / 60 / 60} hours)`);
-      await this._refreshToken()
+      try {
+        await this._refreshToken(token);
+      } catch (error) {
+        console.log('refreshToken', error);
+        return {
+          isLoggedIn: false,
+          username: null
+        }
+      }
     }
   
     // If token is present and valid, log the user in
@@ -173,8 +183,8 @@ class RedditService {
 
     const result: RedditResponse = await response.json();
 
-    if (result.error) {
-      console.error(result.message);
+    if (result.error || !result) {
+      console.log('fetchSavedPosts', result);
       return
     }
 
@@ -229,7 +239,7 @@ class RedditService {
     return savedPosts;
   }
 
-  getPostThumbnail = (post: RedditPost): string | void => {
+  getPostThumbnail = (post: RedditPost): string => {
     const data = post.data;
     const preview = post.data.preview;
 
@@ -401,10 +411,12 @@ class RedditService {
    * It will refresh the token
    * A token expires every hour
    */
-  _refreshToken = async () => {
-    const token = await this._getToken()
+  _refreshToken = async (token: RedditToken) => {
+    const url = 'https://www.reddit.com/api/v1/access_token';
 
-    const url = 'https://www.reddit.com/api/v1/access_token'
+    console.log(url);
+    console.log(this.BEARER_TOKEN);
+    console.log(token.refresh_token);
 
     const response = await fetch(url, {
       method: 'POST',
@@ -417,13 +429,13 @@ class RedditService {
     })
 
     const data = await response.json();
+    
+    if (data.error || !data) throw data;
 
     const newToken = {
       ...data,
       token_date: Date.now()
     }
-
-    if (newToken.error) return console.error(newToken);
 
     this._setToken(newToken);
 
