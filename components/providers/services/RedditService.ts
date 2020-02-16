@@ -78,8 +78,7 @@ class RedditService {
    */
   bootstrapAuthData = async () => {
     const token = await this._getToken();
-    const now = Date.now();
-
+    
     // If the user is not present, the user is logged out
     if (!token) {
       return {
