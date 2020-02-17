@@ -3,11 +3,12 @@
   "displayName": "Bookmarks",
   "expo": {
     "name": "bookmarks",
+    "icon": "./assets/app-icon.png",
     "slug": "bookmarks",
     "scheme": "bookmarks",
     "privacy": "unlisted",
     "sdkVersion": "36.0.0",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "entryPoint": "node_modules/expo/AppEntry.js",
     "platforms": [
       "ios",
@@ -17,6 +18,10 @@
     "android": {
       "package": "com.keziahmoselle.bookmarks",
       "versionCode": 1
+    },
+    "ios": {
+      "bundleIdentifier": "com.keziahmoselle.bookmarks",
+      "buildNumber": "1.0.0"
     },
     "description": "",
     "githubUrl": "https://github.com/KeziahMoselle/bookmarks-tracking"

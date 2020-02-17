@@ -7,6 +7,7 @@ import {
   Caption
 } from 'react-native-paper';
 import { Linking } from 'expo';
+import Swipeable from './Swipeable';
 import usePinnedBookmarks from '../providers/hooks/usePinnedBookmarks';
 import { useBookmarks } from '../providers/BookmarksProvider';
 
@@ -33,19 +34,30 @@ function Bookmark({
    });
 
    const { unsaveBookmark } = useBookmarks();
+   const rightPress = () => unsaveBookmark(id);
 
   return (
-    <View style={[styles.container, styles.padding]}>
-      <View style={styles.header}>
-        <Title>{ subreddit }</Title>
-        <Caption>{ date } ago</Caption>
-      </View>
+    <Swipeable
+      id={id}
+      title={title}
+      permalink={permalink}
+      index={index}
+      leftPress={handlePinClick}
+      isPinned={isPinned}
+      rightPress={rightPress}
+    >
+      <View style={[styles.container, styles.padding]}>
+        <View style={styles.header}>
+          <Title>{ subreddit }</Title>
+          <Caption>{ date } ago</Caption>
+        </View>
 
-      <View style={styles.textContent}>
-        { title && <Caption>{ title }</Caption>}
-        { description && <Paragraph> { description } </Paragraph>}
+        <View style={styles.textContent}>
+          { title && <Caption>{ title }</Caption>}
+          { description && <Paragraph> { description } </Paragraph>}
+        </View>
       </View>
-    </View>
+    </Swipeable>
   )
 }
 
