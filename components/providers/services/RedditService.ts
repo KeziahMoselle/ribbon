@@ -10,7 +10,8 @@ class RedditService {
   CLIENT_ID = credentials.clientId;
   REDIRECT_URL = AuthSession.getRedirectUrl();
   BEARER_TOKEN = new Buffer(`${this.CLIENT_ID}:`).toString('base64');
-  STORAGE_REDDIT_KEY = '@Bookmarks:RedditOAuthKey';
+  STORAGE_REDDIT_TOKEN = '@Bookmarks:RedditOAuthToken';
+  STORAGE_REDDIT_REFRESH_TOKEN = '@Bookmarks:RedditOAuthRefresh';
   STORAGE_REDDIT_USERNAME = '@Bookmarks:RedditUsername';
   STORAGE_REDDIT_BOOKMARKS = '@Bookmarks:RedditBookmarks';
   STORAGE_REDDIT_PINNED_BOOKMARKS = '@Bookmarks:RedditPinnedBookmarks';
@@ -89,14 +90,11 @@ class RedditService {
     
     const now = Date.now();
     const AN_HOUR_MS = 3600 * 1000;
-    console.log(`Token age: (${Math.round((now - token.token_date) / 1000 / 60)} minutes)`);
     
     // Token expired 1 hour
     if (now - token.token_date >= AN_HOUR_MS) {
-      console.log(`Token refreshing 🔄 (${Math.round((now - token.token_date) / 1000 / 60 / 60)} hours)`);
       try {
-        await this._refreshToken(token);
-        console.log('Token refreshed !');
+        await this._refreshToken();
       } catch (error) {
         console.log('refreshToken', error);
       }
@@ -110,7 +108,6 @@ class RedditService {
       username
     }
   }
-
 
   /**
    * Bootstrap the Bookmarks data in the BookmarksProvider
@@ -127,6 +124,11 @@ class RedditService {
     return JSON.parse(localBookmarks);
   }
 
+  /**
+   * Bootstrap the pinnedBookmarks data in the BookmarksProvider
+   * Display pinned bookmarks if they are found
+   * Otherwise display the "NoPinned" component
+   */
   bootstrapPinnedBookmarksData = async (): Promise<BookmarkInterface[]> => {
     const localPinnedBookmarks = await AsyncStorage.getItem(this.STORAGE_REDDIT_PINNED_BOOKMARKS);
 
@@ -137,6 +139,9 @@ class RedditService {
     return JSON.parse(localPinnedBookmarks);
   }
 
+  /**
+   * Save pinnedBookmarks in storage
+   */
   savePinnedBookmarks = async (pinnedBookmarks: BookmarkInterface[]) => {
     try {
       await AsyncStorage.setItem(
@@ -148,6 +153,9 @@ class RedditService {
     }
   }
 
+  /**
+   * Save bookmarks in storage
+   */
   saveBookmarks = async (bookmarks: BookmarkInterface[]) => {
     try {
       await AsyncStorage.setItem(
@@ -235,6 +243,9 @@ class RedditService {
     return savedPosts;
   }
 
+  /**
+   * Find a good thumbnail for a bookmark
+   */
   getPostThumbnail = (post: RedditPost): string => {
     const data = post.data;
     const preview = post.data.preview;
@@ -289,21 +300,20 @@ class RedditService {
     return true;
   }
 
-
   /**
    * Remove all the keys related to RedditService
    * from AsyncStorage
    */
   clearStorage = async () => {
     await AsyncStorage.multiRemove([
-      this.STORAGE_REDDIT_KEY,
+      this.STORAGE_REDDIT_TOKEN,
+      this.STORAGE_REDDIT_REFRESH_TOKEN,
       this.STORAGE_REDDIT_USERNAME,
       this.STORAGE_REDDIT_BOOKMARKS,
       this.STORAGE_REDDIT_PINNED_BOOKMARKS
     ])
   }
   
-
   /**
    * Construct the OAuth URL
    * Used variables :
@@ -322,7 +332,6 @@ class RedditService {
       `&scope=${encodeURIComponent(`history identity save`)}`
     )
   }
-
 
   /**
    * Fetch the username from Reddit
@@ -349,11 +358,11 @@ class RedditService {
     return data.name;
   }
 
-
   /**
    * Called by SignIn()
    * It will fetch the `access_token` endpoint
    * to get the token
+   * and store the `refresh_token` key
    */
   _createToken = async (code: string): Promise<RedditToken> => {
     const url = (
@@ -372,8 +381,16 @@ class RedditService {
       },
     })).json();
 
+    await AsyncStorage.setItem(
+      this.STORAGE_REDDIT_REFRESH_TOKEN,
+      token.refresh_token
+    );
+
     return {
-      ...token,
+      access_token: token.access_token,
+      expires_in: token.expires_in,
+      scope: token.scope,
+      token_type: token.token_type,
       token_date: Date.now()
     }
   }
@@ -384,7 +401,7 @@ class RedditService {
   _getToken = async (): Promise<RedditToken> => {
     if (this.token) return this.token;
 
-    const localToken = await AsyncStorage.getItem(this.STORAGE_REDDIT_KEY);
+    const localToken = await AsyncStorage.getItem(this.STORAGE_REDDIT_TOKEN);
 
     if (!localToken) return null;
     
@@ -392,23 +409,21 @@ class RedditService {
     return token;
   }
 
-
   /**
    * Set the property token
    * Set the token in the AsyncStorage
    */
   _setToken = async (token) => {
     this.token = token;
-    await AsyncStorage.setItem(this.STORAGE_REDDIT_KEY, JSON.stringify(token));
+    await AsyncStorage.setItem(this.STORAGE_REDDIT_TOKEN, JSON.stringify(token));
   }
-
 
   /**
    * It will refresh the token
    * A token expires every hour
    */
-  _refreshToken = async (token: RedditToken) => {
-    console.log(token);
+  _refreshToken = async () => {
+    const refresh_token = await AsyncStorage.getItem(this.STORAGE_REDDIT_REFRESH_TOKEN);
     
     const url = 'https://www.reddit.com/api/v1/access_token';
 
@@ -419,7 +434,7 @@ class RedditService {
         'Content-Type': 'application/x-www-form-urlencoded'
       },
       body: `grant_type=refresh_token` + 
-            `&refresh_token=${token.refresh_token}`
+            `&refresh_token=${refresh_token}`
     })
 
     const data = await response.json();
