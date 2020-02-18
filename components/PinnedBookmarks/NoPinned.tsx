@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { NavigationContext } from 'react-navigation';
 import { View, StyleSheet, Image } from 'react-native';
-import { Button, Title } from 'react-native-paper';
+import { Button, Title, Paragraph } from 'react-native-paper';
 import { useAuth } from '../providers/AuthProvider';
 import { useBookmarks } from '../providers/BookmarksProvider';
 
@@ -37,6 +37,9 @@ function NoBookmark() {
           source={require('../../assets/bulb.png')}
         />
         <Title style={styles.title}>No Pinned Bookmarks</Title>
+        <Paragraph>
+          Swipe on a bookmark to add one !
+        </Paragraph>
       </View>
 
       <Button
