@@ -3,7 +3,7 @@ import { useBookmarks } from '../components/providers/BookmarksProvider';
 import Wrapper from '../components/Layout/Wrapper';
 import Title from '../components/Title';
 import BookmarksList from '../components/BookmarksList';
-import NoBookmark from '../components/NoBookmark';
+import NoBookmark from '../components/Bookmark/NoBookmark';
 import { SafeAreaView } from 'react-native';
 
 function HomeScreen() {

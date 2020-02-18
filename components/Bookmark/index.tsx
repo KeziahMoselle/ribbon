@@ -5,7 +5,8 @@ import styles from './BookmarkStyle';
 import {
   Title,
   Caption,
-  TouchableRipple
+  TouchableRipple,
+  Paragraph
 } from 'react-native-paper';
 import { Linking } from 'expo';
 import usePinnedBookmarks from '../providers/hooks/usePinnedBookmarks';
@@ -46,21 +47,30 @@ function Bookmark({
       isPinned={isPinned}
       rightPress={rightPress}
     >
-      <View style={styles.container}>
+      <View style={[styles.container, !thumbnail && styles.padding]}>
         <View style={[styles.header, styles.padding]}>
           <Title>{ subreddit }</Title>
           <Caption>{ date } ago</Caption>
         </View>
 
-        <TouchableRipple
-          onPress={() => Linking.openURL(permalink || url)}
-          style={styles.imageContainer}
-        >
-          <Image
-            source={{ uri: thumbnail }}
-            style={styles.image}
-          />
-        </TouchableRipple>
+        { thumbnail &&
+          <TouchableRipple
+            onPress={() => Linking.openURL(permalink || url)}
+            style={styles.imageContainer}
+          >
+            <Image
+              source={{ uri: thumbnail }}
+              style={styles.image}
+            />
+          </TouchableRipple>
+        }
+
+        { !thumbnail &&
+          <View style={styles.textContent}>
+            { title && <Caption>{ title }</Caption>}
+            { description && <Paragraph> { description } </Paragraph>}
+          </View>
+        }
       </View>
     </Swipeable>
   )

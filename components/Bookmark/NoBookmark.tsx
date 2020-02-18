@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Image } from 'react-native';
 import { Button, Title } from 'react-native-paper';
-import { useAuth } from './providers/AuthProvider';
-import { useBookmarks } from './providers/BookmarksProvider';
+import { useAuth } from '../providers/AuthProvider';
+import { useBookmarks } from '../providers/BookmarksProvider';
 
 function NoBookmark() {
   const { isLoggedIn, login } = useAuth();
@@ -31,7 +31,7 @@ function NoBookmark() {
       <View style={styles.card}>
         <Image
           style={styles.illustration}
-          source={require('../assets/empty.png')}
+          source={require('../../assets/empty.png')}
         />
         <Title style={styles.title}>No Bookmarks</Title>
       </View>
