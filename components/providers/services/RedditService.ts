@@ -68,7 +68,7 @@ class RedditService {
             `&token=${token.access_token}`
     })
     
-    this.token = null;
+    await this.clearStorage();
   }
 
   /**
@@ -78,7 +78,7 @@ class RedditService {
    */
   bootstrapAuthData = async () => {
     const token = await this._getToken();
-    
+
     // If the user is not present, the user is logged out
     if (!token) {
       return {
@@ -89,19 +89,16 @@ class RedditService {
     
     const now = Date.now();
     const AN_HOUR_MS = 3600 * 1000;
-    console.log(`Token age: (${(now - token.token_date) / 1000 / 60} minutes)`)
+    console.log(`Token age: (${Math.round((now - token.token_date) / 1000 / 60)} minutes)`);
     
     // Token expired 1 hour
     if (now - token.token_date >= AN_HOUR_MS) {
-      console.log(`Token refreshing 🔄 (${(now - token.token_date) / 1000 / 60 / 60} hours)`);
+      console.log(`Token refreshing 🔄 (${Math.round((now - token.token_date) / 1000 / 60 / 60)} hours)`);
       try {
         await this._refreshToken(token);
+        console.log('Token refreshed !');
       } catch (error) {
         console.log('refreshToken', error);
-        return {
-          isLoggedIn: false,
-          username: null
-        }
       }
     }
   
@@ -411,11 +408,9 @@ class RedditService {
    * A token expires every hour
    */
   _refreshToken = async (token: RedditToken) => {
+    console.log(token);
+    
     const url = 'https://www.reddit.com/api/v1/access_token';
-
-    console.log(url);
-    console.log(this.BEARER_TOKEN);
-    console.log(token.refresh_token);
 
     const response = await fetch(url, {
       method: 'POST',

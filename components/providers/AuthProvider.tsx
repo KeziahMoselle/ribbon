@@ -49,7 +49,6 @@ function AuthProvider (props) {
   async function logout() {
     try {
       await RedditService.Disconnect();
-      await RedditService.clearStorage();
     } catch(error) {
       console.log(error);
     } finally {
