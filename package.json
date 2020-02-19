@@ -1,13 +1,9 @@
 {
   "scripts": {
-    "android": "react-native run-android",
-    "ios": "react-native run-ios",
-    "web": "expo start --web",
     "start": "expo start",
-    "clear": "export start --clear",
-    "devtools": "react-devtools",
-    "dist": "expo publish --release-channel production",
-    "test": "jest"
+    "test": "jest",
+    "build:android": "expo build:android -t app-bundle",
+    "dist:android": "expo upload:android --key ./playstore.json --track production"
   },
   "dependencies": {
     "@expo/vector-icons": "^10.0.6",

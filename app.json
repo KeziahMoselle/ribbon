@@ -1,29 +1,27 @@
 {
-  "name": "bookmarks",
-  "displayName": "Bookmarks",
+  "name": "Ribbon",
+  "displayName": "Ribbon",
   "expo": {
-    "name": "bookmarks",
+    "name": "Ribbon",
+    "description": "Manage your bookmarks",
     "icon": "./assets/app-icon.png",
-    "slug": "bookmarks",
-    "scheme": "bookmarks",
+    "slug": "ribbon",
+    "scheme": "ribbon",
     "privacy": "unlisted",
     "sdkVersion": "36.0.0",
     "version": "0.1.0",
     "entryPoint": "node_modules/expo/AppEntry.js",
-    "platforms": [
-      "ios",
-      "android",
-      "web"
-    ],
+    "platforms": ["android"],
+    "githubUrl": "https://github.com/KeziahMoselle/ribbon",
+    "androidShowExponentNotificationInShellApp": false,
+    "orientation": "portrait",
     "android": {
-      "package": "com.keziahmoselle.bookmarks",
+      "package": "com.keziahmoselle.ribbon",
       "versionCode": 1
     },
     "ios": {
-      "bundleIdentifier": "com.keziahmoselle.bookmarks",
+      "bundleIdentifier": "com.keziahmoselle.ribbon",
       "buildNumber": "1.0.0"
-    },
-    "description": "",
-    "githubUrl": "https://github.com/KeziahMoselle/bookmarks-tracking"
+    }
   }
 }
