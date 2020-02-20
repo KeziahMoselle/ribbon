@@ -68,6 +68,8 @@ class RedditService {
       body: `token_type_hint=access_token` + 
             `&token=${token.access_token}`
     })
+
+    this.token = null;
     
     await this.clearStorage();
   }
