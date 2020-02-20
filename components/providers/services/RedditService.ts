@@ -205,8 +205,6 @@ class RedditService {
       const thumbnail = this.getPostThumbnail(post);
       const excerpt = this.getExcerpt(data.selftext);
 
-      console.log(excerpt);
-
       // kind = Link
       if (post.kind === 't3') {
         newPost= {
@@ -263,12 +261,11 @@ class RedditService {
       if (
         preview &&
         preview.images.length > 0 &&
-        preview.images[0].resolutions.length > 0
+        preview.images[0].resolutions.length > 2
       ) {
         // The resolution index is the middle level of compression
         const resolutionIndex = Math.round(preview.images[0].resolutions.length / 2);
-        const previewUrl = preview.images[0].resolutions[resolutionIndex].url;
-        thumbnail = previewUrl;
+        thumbnail = preview.images[0].resolutions[resolutionIndex].url;
       } else {
         thumbnail = preview?.images[0].source.url || data.link_url;
       }
@@ -287,7 +284,7 @@ class RedditService {
     if (!description) return;
     const limit = 140;
     const lastWordIndex = description.lastIndexOf(' ', limit);
-    return description.substr(0, lastWordIndex);
+    return `${description.substr(0, lastWordIndex)}...`;
   }
 
   /**
