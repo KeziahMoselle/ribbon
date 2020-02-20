@@ -22,6 +22,7 @@ function Bookmark({
   title,
   date,
   description,
+  excerpt,
   subreddit,
   permalink,
   thumbnail,
@@ -48,7 +49,8 @@ function Bookmark({
       rightPress={rightPress}
     >
       <View style={[styles.container, !thumbnail && styles.padding]}>
-        <View style={[styles.header, styles.padding]}>
+
+        <View style={[styles.header, thumbnail && styles.padding]}>
           <Title>{ subreddit }</Title>
           <Caption>{ date } ago</Caption>
         </View>
@@ -68,7 +70,7 @@ function Bookmark({
         { !thumbnail &&
           <View style={styles.textContent}>
             { title && <Caption>{ title }</Caption>}
-            { description && <Paragraph> { description } </Paragraph>}
+            { description && <Paragraph> { excerpt } </Paragraph>}
           </View>
         }
       </View>

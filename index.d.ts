@@ -130,6 +130,7 @@ interface BookmarkInterface {
   title: string;
   date: string;
   description: string;
+  excerpt: string;
   subreddit: string;
   permalink: string;
   thumbnail: string;

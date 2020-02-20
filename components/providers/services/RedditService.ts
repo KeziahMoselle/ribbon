@@ -203,6 +203,9 @@ class RedditService {
 
       const date = formatDistanceToNow(data.created_utc * 1000);
       const thumbnail = this.getPostThumbnail(post);
+      const excerpt = this.getExcerpt(data.selftext);
+
+      console.log(excerpt);
 
       // kind = Link
       if (post.kind === 't3') {
@@ -212,6 +215,7 @@ class RedditService {
           title: data.title,
           date,
           description: data.selftext,
+          excerpt,
           subreddit: data.subreddit_name_prefixed,
           permalink: data.link_permalink,
           thumbnail,
@@ -227,6 +231,7 @@ class RedditService {
           title: data.link_title,
           date,
           description: data.selftext,
+          excerpt,
           subreddit: data.subreddit_name_prefixed,
           permalink: data.link_permalink,
           thumbnail,
@@ -276,6 +281,13 @@ class RedditService {
     }
 
     return thumbnail;
+  }
+
+  getExcerpt = (description: string): string => {
+    if (!description) return;
+    const limit = 140;
+    const lastWordIndex = description.lastIndexOf(' ', limit);
+    return description.substr(0, lastWordIndex);
   }
 
   /**
