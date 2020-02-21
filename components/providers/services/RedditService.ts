@@ -204,6 +204,11 @@ class RedditService {
       const date = formatDistanceToNow(data.created_utc * 1000);
       const thumbnail = this.getPostThumbnail(post);
       const excerpt = this.getExcerpt(data.selftext);
+      const permalink = (
+        data.link_permalink
+        || `https://reddit.com${data.permalink}`
+        || data.url
+      );
 
       // kind = Link
       if (post.kind === 't3') {
@@ -215,7 +220,7 @@ class RedditService {
           description: data.selftext,
           excerpt,
           subreddit: data.subreddit_name_prefixed,
-          permalink: data.link_permalink,
+          permalink,
           thumbnail,
           url: data.url,
         }
@@ -231,7 +236,7 @@ class RedditService {
           description: data.selftext,
           excerpt,
           subreddit: data.subreddit_name_prefixed,
-          permalink: data.link_permalink,
+          permalink,
           thumbnail,
           url: data.link_url,
         }

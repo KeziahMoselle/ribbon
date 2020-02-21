@@ -57,7 +57,7 @@ function Bookmark({
 
         { thumbnail &&
           <TouchableRipple
-            onPress={() => Linking.openURL(permalink || url)}
+            onPress={() => Linking.openURL(permalink)}
             style={styles.imageContainer}
           >
             <Image

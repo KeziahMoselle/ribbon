@@ -61,3 +61,5 @@ buck-out/
 .env
 
 playstore.json
+keystore.*
+*.jks
