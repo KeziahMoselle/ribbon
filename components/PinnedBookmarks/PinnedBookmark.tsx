@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Image } from 'react-native';
+import { View, Image } from 'react-native';
 import styles from '../Bookmark/BookmarkStyle';
 import {
   Title,
@@ -38,7 +38,7 @@ function Bookmark({
       leftPress={handleUnpinClick}
       rightPress={unsaveBookmark}
     >
-      <View style={styles.container}>
+      <View style={[styles.container, styles.padding]}>
         <View style={styles.header}>
           <Title>{ subreddit }</Title>
           <Caption>{ date } ago</Caption>
