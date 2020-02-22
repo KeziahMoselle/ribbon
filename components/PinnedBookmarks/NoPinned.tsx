@@ -1,12 +1,12 @@
-import React, { useState, useContext } from 'react';
-import { NavigationContext } from 'react-navigation';
+import React, { useState } from 'react';
 import { View, StyleSheet, Image } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { Button, Title, Paragraph } from 'react-native-paper';
 import { useAuth } from '../providers/AuthProvider';
 import { useBookmarks } from '../providers/BookmarksProvider';
 
 function NoBookmark() {
-  const { navigate } = useContext(NavigationContext);
+  const navigation = useNavigation();
   const { isLoggedIn, login } = useAuth();
   const { refetch } = useBookmarks();
   const [isImportLoading, setIsImportLoading] = useState(false);
@@ -20,11 +20,11 @@ function NoBookmark() {
   async function importBookmarks() {
     setIsImportLoading(true);
     if (isLoggedIn) {
-      navigate('Bookmarks');
+      navigation.navigate('Bookmarks');
     } else {
       await login();
       await refetch();
-      navigate('Bookmarks');
+      navigation.navigate('Bookmarks');
     }
     setIsImportLoading(false);
   }
