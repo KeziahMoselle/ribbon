@@ -2,6 +2,7 @@ import React from 'react';
 import AppProviders from './components/providers/Context';
 import { NavigationContainer } from '@react-navigation/native';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+import { Feather } from '@expo/vector-icons';
 
 import HomeScreen from './screens/HomeScreen';
 import PinnedScreen from'./screens/PinnedScreen';
@@ -28,7 +29,10 @@ function App () {
             name="Home"
             component={HomeScreen}
             options={{
-              tabBarIcon: 'bookmark',
+              tabBarIcon: ({ color }) => (
+                <Feather name="bookmark" color={color} size={20} />
+              ),
+              tabBarColor: '#000'
             }}
           />
 
@@ -36,7 +40,10 @@ function App () {
             name="Pinned"
             component={PinnedScreen}
             options={{
-              tabBarIcon: 'star',
+              tabBarIcon: ({ color }) => (
+                <Feather name="star" color={color} size={20} />
+              ),
+              tabBarColor: '#000'
             }}
           />
 
@@ -44,7 +51,10 @@ function App () {
             name="Settings"
             component={SettingsScreen}
             options={{
-              tabBarIcon: 'settings',
+              tabBarIcon: ({ color }) => (
+                <Feather name="settings" color={color} size={20} />
+              ),
+              tabBarColor: '#333'
             }}
           />
 
