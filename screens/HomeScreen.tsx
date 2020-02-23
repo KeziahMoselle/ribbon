@@ -12,12 +12,16 @@ const HomeStack = createStackNavigator();
 
 function HomeScreen() {
   return (
-    <HomeStack.Navigator
-      initialRouteName="Bookmarks"
-      headerMode="none"
-    >
-      <HomeStack.Screen name="Bookmarks" component={Bookmarks} />
-      <HomeStack.Screen name="BookmarkDetails" component={BookmarkDetails} />
+    <HomeStack.Navigator initialRouteName="Bookmarks" headerMode="none">
+      <HomeStack.Screen
+        name="Bookmarks"
+        component={Bookmarks}
+      />
+
+      <HomeStack.Screen
+        name="BookmarkDetails"
+        component={BookmarkDetails}
+      />
     </HomeStack.Navigator>
   )
 }
