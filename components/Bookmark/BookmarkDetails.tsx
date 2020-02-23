@@ -1,12 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Linking } from 'expo';
 import { View, ScrollView } from 'react-native';
-import { WebView } from 'react-native-webview';
-import { Appbar, Subheading, Paragraph } from 'react-native-paper';
+import {
+  Appbar,
+  Subheading,
+  Paragraph,
+  Divider,
+  FAB,
+  Menu
+} from 'react-native-paper';
 import Wrapper from '../../components/Layout/Wrapper';
 import { Image } from 'react-native';
 
 function BookmarkDetails({ navigation, route }) {
   const bookmark: BookmarkInterface = route.params;
+  const readBookmark = () => Linking.openURL(bookmark.permalink);
+  const [isMenuVisible, setIsMenuVisible] = useState(false);
+  const openMenu = () => setIsMenuVisible(true);
+  const closeMenu = () => setIsMenuVisible(false);
 
   return (
     <React.Fragment>
@@ -18,7 +29,21 @@ function BookmarkDetails({ navigation, route }) {
           title={bookmark.title}
           subtitle={bookmark.subreddit}
         />
-        <Appbar.Action icon="dots-vertical" onPress={() => {}} />
+
+        <Menu
+          visible={isMenuVisible}
+          onDismiss={closeMenu}
+          anchor={
+            <Appbar.Action
+              icon="dots-vertical"
+              onPress={openMenu}
+              color="white"
+            />
+          }
+        >
+          <Menu.Item onPress={() => {}} title="Save" />
+          <Menu.Item onPress={openMenu} title="Read" />
+        </Menu>
       </Appbar.Header>
 
       <ScrollView>
@@ -40,8 +65,20 @@ function BookmarkDetails({ navigation, route }) {
         }
       
         <Wrapper>
-          <Subheading style={{ marginTop: 8, marginBottom: 16 }}>{ bookmark.title }</Subheading>
+          <Subheading style={{ marginTop: 8, marginBottom: 16 }}>
+            { bookmark.title }
+          </Subheading>
 
+          <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <FAB
+              icon="link"
+              onPress={readBookmark}
+              label="Read"
+              style={{ backgroundColor: '#000' }}
+            />
+          </View>
+
+          <Divider style={{ marginVertical: 16 }} />
           <Paragraph>{ bookmark.description }</Paragraph>
         </Wrapper>
       </ScrollView>
