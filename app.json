@@ -17,7 +17,10 @@
     "orientation": "portrait",
     "android": {
       "package": "com.keziahmoselle.ribbon",
-      "versionCode": 1
+      "versionCode": 2,
+      "permissions": [
+        "NOTIFICATIONS"
+      ]
     },
     "ios": {
       "bundleIdentifier": "com.keziahmoselle.ribbon",

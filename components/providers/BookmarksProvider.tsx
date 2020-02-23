@@ -6,13 +6,11 @@ const BookmarksContext = React.createContext<BookmarksProvider | null>(null);
 
 function BookmarksProvider (props) {
   const [isUpdatingBookmarks, setIsUpdatingBookmarks] = useState(false);
-  const [isUpdatingFinished, setIsUpdatingFinished] = useState(false);
 
   const {
     data: bookmarks,
     reload: updateBookmarks,
     setData: setBookmarks,
-    isFulfilled,
     status
   } = useAsync({
     promiseFn: RedditService.bootstrapBookmarksData
@@ -50,13 +48,12 @@ function BookmarksProvider (props) {
   async function refetch() {
     try {
       setIsUpdatingBookmarks(true);
-      await RedditService.fetchSavedPosts();
+      await RedditService.fetchAllSavedPosts();
     } catch (error) {
       console.log(error);
     } finally {
       setIsUpdatingBookmarks(false);
       updateBookmarks();
-      setIsUpdatingFinished(true);
     }
   }
 

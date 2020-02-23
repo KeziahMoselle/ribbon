@@ -38,7 +38,7 @@ function AuthProvider (props) {
   async function login() {
     try {
       await RedditService.SignIn();
-      await RedditService.fetchSavedPosts();
+      await RedditService.fetchAllSavedPosts();
     } catch (error) {
       console.log(error);
     } finally {

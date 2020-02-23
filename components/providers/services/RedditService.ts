@@ -16,7 +16,8 @@ class RedditService {
   STORAGE_REDDIT_PINNED_BOOKMARKS = '@Bookmarks:RedditPinnedBookmarks';
   USER_AGENT = `${Platform.OS}:${appInfo.expo.android.package}:${appInfo.expo.version} (by /u/${credentials.creatorUsername})`;
 
-  token = null
+  token = null;
+  username = null;
 
   /**
    * Open a browser to initiate the OAuth 2 process
@@ -172,11 +173,45 @@ class RedditService {
    * It will fetch saved posts from Reddit
    * and store them
    */
-  fetchSavedPosts = async () => {
-    const token = await this._getToken();
-    const username = await AsyncStorage.getItem(this.STORAGE_REDDIT_USERNAME);
+  fetchAllSavedPosts = async () => {
+    let after = '';
+    let count = 0;
+    const allSavedPosts = [];
+    
+    do {
+      const result = await this.fetchSavedPosts(after, count);
 
-    const url = `https://oauth.reddit.com/user/${username}/saved?raw_json=1`
+      if (result.error || !result) throw result;
+
+      if (result.data.after) {
+        result.data.children.forEach(child => allSavedPosts.push(child));
+        count += result.data.children.length;
+        after = result.data.after;
+      } else {
+        // Finished
+        after = null;
+      }
+    } while (after);
+
+    const savedPosts = this.filterSavedPosts(allSavedPosts);
+
+    await AsyncStorage.setItem(
+      this.STORAGE_REDDIT_BOOKMARKS,
+      JSON.stringify(savedPosts)
+    );
+
+    return savedPosts;
+  }
+
+  fetchSavedPosts = async (after = null, count = null): Promise<RedditResponse> => {
+    const token = await this._getToken();
+    const username = await this._getUsername();
+
+    const baseUrl = `https://oauth.reddit.com/user/${username}/saved?raw_json=1&limit=100`;
+    const query = `&after=${after}&count=${count}`
+    // First query : baseUrl without query
+    // Subsequent queries with query `after` and `count`
+    const url = after ? `${baseUrl}${query}` : baseUrl;
 
     const response = await fetch(url, {
       method: 'GET',
@@ -187,15 +222,13 @@ class RedditService {
     })
 
     const result: RedditResponse = await response.json();
+    return result;
+  }
 
-    if (result.error || !result) {
-      console.log('fetchSavedPosts', result);
-      return
-    }
-
+  filterSavedPosts = (result: RedditPost[]) => {
     const savedPosts: BookmarkInterface[] = [];
 
-    for (const post of result.data.children) {
+    for (const post of result) {
       const data = post.data;
 
       let newPost: BookmarkInterface;
@@ -243,11 +276,6 @@ class RedditService {
 
       savedPosts.push(newPost);
     }
-
-    await AsyncStorage.setItem(
-      this.STORAGE_REDDIT_BOOKMARKS,
-      JSON.stringify(savedPosts)
-    );
 
     return savedPosts;
   }
@@ -464,6 +492,13 @@ class RedditService {
     this._setToken(newToken);
 
     return newToken;
+  }
+
+  _getUsername = async () => {
+    if (this.username) return this.username;
+    const username = await AsyncStorage.getItem(this.STORAGE_REDDIT_USERNAME);
+    this.username = username;
+    return username;
   }
 
 }

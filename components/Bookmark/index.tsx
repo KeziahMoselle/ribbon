@@ -70,7 +70,7 @@ function Bookmark({
         { !thumbnail &&
           <View style={styles.textContent}>
             { title && <Caption>{ title }</Caption>}
-            { description && <Paragraph> { excerpt } </Paragraph>}
+            { excerpt && <Paragraph> { excerpt } </Paragraph>}
           </View>
         }
       </View>
