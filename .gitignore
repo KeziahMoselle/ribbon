@@ -63,3 +63,6 @@ buck-out/
 playstore.json
 keystore.*
 *.jks
+
+.vscode
+*.sh
