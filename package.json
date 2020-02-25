@@ -3,7 +3,8 @@
     "start": "expo start",
     "test": "jest",
     "build:android": "expo build:android -t app-bundle",
-    "dist:android": "expo upload:android --key ./playstore.json --track production"
+    "dist:android": "expo upload:android --key ./playstore.json --track production",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx --fix"
   },
   "dependencies": {
     "@expo/vector-icons": "^10.0.6",
@@ -34,11 +35,22 @@
     "@babel/core": "~7.6.0",
     "@types/react": "~16.9.0",
     "@types/react-native": "~0.60.23",
+    "@typescript-eslint/eslint-plugin": "^2.21.0",
+    "@typescript-eslint/parser": "^2.21.0",
     "babel-plugin-inline-dotenv": "^1.5.0",
     "babel-preset-expo": "~8.0.0",
+    "eslint": "^6.8.0",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-node": "^11.0.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-react": "^7.18.3",
+    "eslint-plugin-react-hooks": "^2.4.0",
+    "eslint-plugin-react-native": "^3.8.1",
+    "eslint-plugin-standard": "^4.0.1",
     "jest-expo": "~36.0.1",
     "react-devtools": "^3",
-    "typescript": "~3.6.3"
+    "typescript": "~3.8.2"
   },
   "jest": {
     "preset": "react-native"
