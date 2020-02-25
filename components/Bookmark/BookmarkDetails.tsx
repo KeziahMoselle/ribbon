@@ -11,13 +11,26 @@ import {
 } from 'react-native-paper';
 import Wrapper from '../../components/Layout/Wrapper';
 import { Image } from 'react-native';
+import usePinnedBookmarks from '../providers/hooks/usePinnedBookmarks';
+
+interface Bookmark extends BookmarkInterface {
+  index: number;
+}
 
 function BookmarkDetails({ navigation, route }) {
-  const bookmark: BookmarkInterface = route.params;
+  const bookmark: Bookmark = route.params;
   const readBookmark = () => Linking.openURL(bookmark.permalink);
+
   const [isMenuVisible, setIsMenuVisible] = useState(false);
   const openMenu = () => setIsMenuVisible(true);
   const closeMenu = () => setIsMenuVisible(false);
+
+  const { isPinned, handlePinClick } = usePinnedBookmarks({
+    id: bookmark.id,
+    index: bookmark.index,
+    title: bookmark.title,
+    permalink: bookmark.permalink
+  });
 
   return (
     <React.Fragment>
@@ -41,8 +54,8 @@ function BookmarkDetails({ navigation, route }) {
             />
           }
         >
-          <Menu.Item onPress={() => {}} title="Save" />
-          <Menu.Item onPress={openMenu} title="Read" />
+          <Menu.Item onPress={handlePinClick} title={isPinned ? 'Unpin' : 'Pin'} />
+          <Menu.Item onPress={readBookmark} title="Read" />
         </Menu>
       </Appbar.Header>
 
@@ -69,16 +82,8 @@ function BookmarkDetails({ navigation, route }) {
             { bookmark.title }
           </Subheading>
 
-          <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-            <FAB
-              icon="link"
-              onPress={readBookmark}
-              label="Read"
-              style={{ backgroundColor: '#000' }}
-            />
-          </View>
-
           <Divider style={{ marginVertical: 16 }} />
+          
           <Paragraph>{ bookmark.description }</Paragraph>
         </Wrapper>
       </ScrollView>
