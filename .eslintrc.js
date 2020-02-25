@@ -23,15 +23,18 @@ module.exports = {
   plugins: [
     'react',
     'react-native',
+    'react-hooks',
     '@typescript-eslint'
   ],
   rules: {
-    "react-native/no-unused-styles": 2,
-    "react-native/split-platform-components": 2,
-    "react-native/no-inline-styles": 2,
-    "react-native/no-single-element-style-arrays": 2,
+    'react-native/no-unused-styles': 'error',
+    'react-native/split-platform-components': 'error',
+    'react-native/no-inline-styles': 'error',
+    'react-native/no-single-element-style-arrays': 'error',
     'react/prop-types': 'off',
-    'react/display-name': 'off'
+    'react/display-name': 'off',
+    'react-hooks/rules-of-hooks': 'error',
+    'react-hooks/exhaustive-deps': 'warn'
   },
   settings: {
     react: {

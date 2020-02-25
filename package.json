@@ -4,7 +4,7 @@
     "test": "jest",
     "build:android": "expo build:android -t app-bundle",
     "dist:android": "expo upload:android --key ./playstore.json --track production",
-    "lint": "eslint ./src/**/* --fix"
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx --fix"
   },
   "dependencies": {
     "@expo/vector-icons": "^10.0.6",
@@ -45,6 +45,7 @@
     "eslint-plugin-node": "^11.0.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-react": "^7.18.3",
+    "eslint-plugin-react-hooks": "^2.4.0",
     "eslint-plugin-react-native": "^3.8.1",
     "eslint-plugin-standard": "^4.0.1",
     "jest-expo": "~36.0.1",
