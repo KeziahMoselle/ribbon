@@ -18,9 +18,7 @@
     "android": {
       "package": "com.keziahmoselle.ribbon",
       "versionCode": 3,
-      "permissions": [
-        "NOTIFICATIONS"
-      ]
+      "permissions": []
     },
     "ios": {
       "bundleIdentifier": "com.keziahmoselle.ribbon",

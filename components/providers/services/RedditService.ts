@@ -1,5 +1,6 @@
 import { AuthSession } from 'expo';
 import { AsyncStorage, Platform } from 'react-native';
+import { encode as btoa } from 'base-64';
 import credentials from './credentials';
 import { formatDistanceToNow } from 'date-fns';
 import appInfo from '../../../app.json';
@@ -8,7 +9,7 @@ class RedditService {
 
   CLIENT_ID = credentials.clientId;
   REDIRECT_URL = AuthSession.getRedirectUrl();
-  BEARER_TOKEN = globalThis.btoa(`${this.CLIENT_ID}:`);
+  BEARER_TOKEN = btoa(`${this.CLIENT_ID}:`);
   STORAGE_REDDIT_TOKEN = '@Bookmarks:RedditOAuthToken';
   STORAGE_REDDIT_REFRESH_TOKEN = '@Bookmarks:RedditOAuthRefresh';
   STORAGE_REDDIT_USERNAME = '@Bookmarks:RedditUsername';
