@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { FlatList } from 'react-native'
 import { useBookmarks } from '../../providers/BookmarksProvider'
 import PinnedBookmark from './PinnedBookmark'

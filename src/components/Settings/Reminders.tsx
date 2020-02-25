@@ -5,6 +5,7 @@ import { Switch } from 'react-native-paper'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import Section from './Section'
 import ReminderBtn from './ReminderBtn'
+import styles from '../Bookmark/BookmarkStyle'
 
 function Reminders () {
   const [isOpen, setIsOpen] = useState(false)
@@ -34,7 +35,7 @@ function Reminders () {
         />}
     >
 
-      <View style={{ flexDirection: 'row' }}>
+      <View style={styles.flexRow}>
         <ReminderBtn
           onPress={setIsOpen}
           reminder={reminder}

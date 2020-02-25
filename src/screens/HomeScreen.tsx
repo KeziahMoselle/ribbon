@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { SafeAreaView, View, StyleSheet, FlatList, BackHandler } from 'react-native';
 import { TouchableRipple, Searchbar } from 'react-native-paper';
 import { createStackNavigator } from '@react-navigation/stack';
-import { useBookmarks } from '../../components/providers/BookmarksProvider';
-import Wrapper from '../../components/Layout/Wrapper';
-import Title from '../../components/Title';
-import NoBookmark from '../../components/Bookmark/NoBookmark';
-import BookmarkDetails from '../../components/Bookmark/BookmarkDetails';
+import { useBookmarks } from '../providers/BookmarksProvider';
+import Wrapper from '../components/Layout/Wrapper';
+import Title from '../components/Title';
+import NoBookmark from '../components/Bookmark/NoBookmark';
+import BookmarkDetails from '../components/Bookmark/BookmarkDetails';
 import { Feather } from '@expo/vector-icons';
-import Bookmark from '../../components/Bookmark';
+import Bookmark from '../components/Bookmark';
 
 const HomeStack = createStackNavigator();
 

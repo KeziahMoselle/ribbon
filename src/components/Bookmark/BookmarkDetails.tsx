@@ -33,7 +33,7 @@ function BookmarkDetails ({ navigation, route }) {
       <ScrollView>
 
         { bookmark.thumbnail &&
-          <View style={{ height: 250 }}>
+          <View style={styles.imageContainer}>
 
             <Image
               source={{ uri: bookmark.thumbnail }}
@@ -83,6 +83,9 @@ function BookmarkDetails ({ navigation, route }) {
 }
 
 const styles = StyleSheet.create({
+  imageContainer: {
+    height: 250
+  },
   FAB: {
     backgroundColor: '#000',
     borderColor: '#FFF',

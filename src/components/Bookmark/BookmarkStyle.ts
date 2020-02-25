@@ -1,6 +1,9 @@
 import { StyleSheet } from 'react-native'
 
 const styles = StyleSheet.create({
+  flexRow: {
+    flexDirection: 'row'
+  },
   container: {
     backgroundColor: '#FFF',
     borderRadius: 8,

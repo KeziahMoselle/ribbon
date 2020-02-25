@@ -9,7 +9,8 @@ module.exports = {
   ],
   globals: {
     Atomics: 'readonly',
-    SharedArrayBuffer: 'readonly'
+    SharedArrayBuffer: 'readonly',
+    alert: 'readonly'
   },
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -29,6 +30,8 @@ module.exports = {
     "react-native/split-platform-components": 2,
     "react-native/no-inline-styles": 2,
     "react-native/no-single-element-style-arrays": 2,
+    'react/prop-types': 'off',
+    'react/display-name': 'off'
   },
   settings: {
     react: {

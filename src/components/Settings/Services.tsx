@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { StyleSheet } from 'react-native'
 import { useAuth } from '../../providers/AuthProvider'
 import { useBookmarks } from '../../providers/BookmarksProvider'
 import useNotifications from '../../providers/hooks/useNotifications'
@@ -57,7 +58,7 @@ function Services () {
         mode="outlined"
         color="#FF5700"
         icon="reddit"
-        style={{ marginVertical: 1 }}
+        style={styles.serviceBtn}
       >
         {isLoggedIn ? 'Revoke access' : 'Login with Reddit'}
       </Button>
@@ -79,7 +80,7 @@ function Services () {
               Note: It will remove your pinned bookmarks.
             </Caption>
           </Dialog.Content>
-          <Dialog.Actions style={{ justifyContent: 'space-between' }}>
+          <Dialog.Actions style={styles.dialogAction}>
             <Button
               color="#000"
               onPress={closeDialog}
@@ -89,7 +90,7 @@ function Services () {
 
             <Button
               mode="contained"
-              style={{ backgroundColor: '#F56565' }}
+              style={styles.logoutBtn}
               onPress={handleLogout}
             >
               I want to log out
@@ -100,5 +101,17 @@ function Services () {
     </Section>
   )
 }
+
+const styles = StyleSheet.create({
+  serviceBtn: {
+    marginVertical: 1
+  },
+  dialogAction: {
+    justifyContent: 'space-between'
+  },
+  logoutBtn: {
+    backgroundColor: '#F56565'
+  }
+})
 
 export default Services

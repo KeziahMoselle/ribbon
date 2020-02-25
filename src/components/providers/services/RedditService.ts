@@ -1,9 +1,9 @@
 import { AuthSession } from 'expo';
 import { AsyncStorage, Platform } from 'react-native';
-import { encode as btoa } from './node_modules/base-64';
+import { encode as btoa } from 'base-64';
 import credentials from './credentials';
 import { formatDistanceToNow } from 'date-fns';
-import appInfo from '../../../../../app.json';
+import appInfo from '../../../../app.json';
 
 class RedditService {
 

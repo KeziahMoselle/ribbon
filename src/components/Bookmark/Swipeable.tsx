@@ -1,7 +1,5 @@
 import React from 'react'
 import Swipeable from 'react-native-gesture-handler/Swipeable'
-import usePinnedBookmarks from '../../providers/hooks/usePinnedBookmarks'
-import { useBookmarks } from '../../providers/BookmarksProvider'
 import { PinAction, UnsaveAction } from './Actions'
 
 interface Props {
