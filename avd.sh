@@ -1,1 +1,0 @@
-cd ~/AppData/Local/Android/Sdk/emulator && ./emulator -avd Nexus_6P_API_27
