@@ -1,12 +1,11 @@
-import { AuthSession } from 'expo';
-import { AsyncStorage, Platform } from 'react-native';
-import { encode as btoa } from 'base-64';
-import credentials from './credentials';
-import { formatDistanceToNow } from 'date-fns';
-import appInfo from '../../../app.json';
+import { AuthSession } from 'expo'
+import { AsyncStorage, Platform } from 'react-native'
+import { encode as btoa } from 'base-64'
+import credentials from './credentials'
+import { formatDistanceToNow } from 'date-fns'
+import appInfo from '../../../app.json'
 
 class RedditService {
-
   CLIENT_ID = credentials.clientId;
   REDIRECT_URL = AuthSession.getRedirectUrl();
   BEARER_TOKEN = btoa(`${this.CLIENT_ID}:`);
@@ -26,29 +25,29 @@ class RedditService {
    */
   SignIn = async (): Promise<RedditToken> => {
     try {
-      const state = new Date().valueOf().toString();
-      const authUrl = this._getAuthUrl(state);
-      const result = await AuthSession.startAsync({ authUrl, returnUrl: this.REDIRECT_URL });
-      
+      const state = new Date().valueOf().toString()
+      const authUrl = this._getAuthUrl(state)
+      const result = await AuthSession.startAsync({ authUrl, returnUrl: this.REDIRECT_URL })
+
       if (result.type === 'dismiss') return
       if (result.type !== 'success') return
-      
-      const { params } = result;
-      
+
+      const { params } = result
+
       if (params.state !== state) return
       if (params.error === 'access_denied') {
         alert('Reddit OAuth access denied.')
         return
       }
-      
-      const token = await this._createToken(params.code);
 
-      await this._setToken(token);
-      await this._fetchUserInfo();
-      
+      const token = await this._createToken(params.code)
+
+      await this._setToken(token)
+      await this._fetchUserInfo()
+
       return token
     } catch (error) {
-      console.log('SignIn:', error);
+      console.log('SignIn:', error)
     }
   }
 
@@ -59,20 +58,20 @@ class RedditService {
     const token = await this._getToken()
 
     const url = 'https://www.reddit.com/api/v1/revoke_token'
-  
+
     await fetch(url, {
       method: 'POST',
       headers: {
         Authorization: `Basic ${this.BEARER_TOKEN}`,
         'Content-Type': 'application/x-www-form-urlencoded'
       },
-      body: `token_type_hint=access_token` + 
+      body: 'token_type_hint=access_token' +
             `&token=${token.access_token}`
     })
 
-    this.token = null;
-    
-    await this.clearStorage();
+    this.token = null
+
+    await this.clearStorage()
   }
 
   /**
@@ -81,7 +80,7 @@ class RedditService {
    * otherwise it will refresh it
    */
   bootstrapAuthData = async () => {
-    const token = await this._getToken();
+    const token = await this._getToken()
 
     // If the user is not present, the user is logged out
     if (!token) {
@@ -90,21 +89,21 @@ class RedditService {
         username: null
       }
     }
-    
-    const now = Date.now();
-    const AN_HOUR_MS = 3600 * 1000;
-    
+
+    const now = Date.now()
+    const AN_HOUR_MS = 3600 * 1000
+
     // Token expired 1 hour
     if (now - token.token_date >= AN_HOUR_MS) {
       try {
-        await this._refreshToken();
+        await this._refreshToken()
       } catch (error) {
-        console.log('refreshToken', error);
+        console.log('refreshToken', error)
       }
     }
-  
+
     // If token is present and valid, log the user in
-    const username = await AsyncStorage.getItem(this.STORAGE_REDDIT_USERNAME);
+    const username = await AsyncStorage.getItem(this.STORAGE_REDDIT_USERNAME)
 
     return {
       isLoggedIn: true,
@@ -118,13 +117,13 @@ class RedditService {
    * Otherwise display the "NoBookmark" component
    */
   bootstrapBookmarksData = async (): Promise<BookmarkInterface[]> => {
-    const localBookmarks = await AsyncStorage.getItem(this.STORAGE_REDDIT_BOOKMARKS);
+    const localBookmarks = await AsyncStorage.getItem(this.STORAGE_REDDIT_BOOKMARKS)
 
     if (!localBookmarks) {
-      throw 'No bookmarks';
+      throw new Error('No bookmarks')
     }
-    
-    return JSON.parse(localBookmarks);
+
+    return JSON.parse(localBookmarks)
   }
 
   /**
@@ -133,13 +132,13 @@ class RedditService {
    * Otherwise display the "NoPinned" component
    */
   bootstrapPinnedBookmarksData = async (): Promise<BookmarkInterface[]> => {
-    const localPinnedBookmarks = await AsyncStorage.getItem(this.STORAGE_REDDIT_PINNED_BOOKMARKS);
+    const localPinnedBookmarks = await AsyncStorage.getItem(this.STORAGE_REDDIT_PINNED_BOOKMARKS)
 
     if (!localPinnedBookmarks) {
-      throw 'No pinned bookmarks';
+      throw new Error('No pinned bookmarks')
     }
 
-    return JSON.parse(localPinnedBookmarks);
+    return JSON.parse(localPinnedBookmarks)
   }
 
   /**
@@ -150,9 +149,9 @@ class RedditService {
       await AsyncStorage.setItem(
         this.STORAGE_REDDIT_PINNED_BOOKMARKS,
         JSON.stringify(pinnedBookmarks)
-      );
+      )
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
   }
 
@@ -164,9 +163,9 @@ class RedditService {
       await AsyncStorage.setItem(
         this.STORAGE_REDDIT_BOOKMARKS,
         JSON.stringify(bookmarks)
-      );
+      )
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
   }
 
@@ -175,77 +174,77 @@ class RedditService {
    * and store them
    */
   fetchAllSavedPosts = async () => {
-    let after = '';
-    let count = 0;
-    const allSavedPosts = [];
-    
-    do {
-      const result = await this.fetchSavedPosts(after, count);
+    let after = ''
+    let count = 0
+    const allSavedPosts = []
 
-      if (result.error || !result) throw result;
+    do {
+      const result = await this.fetchSavedPosts(after, count)
+
+      if (result.error || !result) throw result
 
       if (result.data.after) {
-        result.data.children.forEach(child => allSavedPosts.push(child));
-        count += result.data.children.length;
-        after = result.data.after;
+        result.data.children.forEach(child => allSavedPosts.push(child))
+        count += result.data.children.length
+        after = result.data.after
       } else {
         // Finished
-        after = null;
+        after = null
       }
-    } while (after);
+    } while (after)
 
-    const savedPosts = this.filterSavedPosts(allSavedPosts);
+    const savedPosts = this.filterSavedPosts(allSavedPosts)
 
     await AsyncStorage.setItem(
       this.STORAGE_REDDIT_BOOKMARKS,
       JSON.stringify(savedPosts)
-    );
+    )
 
-    return savedPosts;
+    return savedPosts
   }
 
   fetchSavedPosts = async (after = null, count = null): Promise<RedditResponse> => {
-    const token = await this._getToken();
-    const username = await this._getUsername();
+    const token = await this._getToken()
+    const username = await this._getUsername()
 
-    const baseUrl = `https://oauth.reddit.com/user/${username}/saved?raw_json=1&limit=100`;
+    const baseUrl = `https://oauth.reddit.com/user/${username}/saved?raw_json=1&limit=100`
     const query = `&after=${after}&count=${count}`
     // First query : baseUrl without query
     // Subsequent queries with query `after` and `count`
-    const url = after ? `${baseUrl}${query}` : baseUrl;
+    const url = after ? `${baseUrl}${query}` : baseUrl
 
     const response = await fetch(url, {
       method: 'GET',
       headers: {
-        'Authorization': `bearer ${token.access_token}`,
+        Authorization: `bearer ${token.access_token}`,
         'User-Agent': this.USER_AGENT
       }
     })
 
-    const result: RedditResponse = await response.json();
-    return result;
+    const result: RedditResponse = await response.json()
+    return result
   }
 
   filterSavedPosts = (result: RedditPost[]) => {
-    const savedPosts: BookmarkInterface[] = [];
+    const savedPosts: BookmarkInterface[] = []
 
     for (const post of result) {
-      const data = post.data;
+      const data = post.data
 
-      let newPost: BookmarkInterface;
+      let newPost: BookmarkInterface
 
-      const date = formatDistanceToNow(data.created_utc * 1000);
-      const thumbnail = this.getPostThumbnail(post);
-      const excerpt = this.getExcerpt(data.selftext);
+      const date = formatDistanceToNow(data.created_utc * 1000)
+      const thumbnail = this.getPostThumbnail(post)
+      const excerpt = this.getExcerpt(data.selftext)
       const permalink = (
-        data.link_permalink
-        || `https://reddit.com${data.permalink}`
-        || data.url
-      );
+        data.link_permalink ||
+        `https://reddit.com${data.permalink}` ||
+        data.url
+      )
 
       // kind = Link
       if (post.kind === 't3') {
-        newPost= {
+        newPost = {
           kind: 'Link',
           id: data.name,
           title: data.title,
@@ -255,7 +254,7 @@ class RedditService {
           subreddit: data.subreddit_name_prefixed,
           permalink,
           thumbnail,
-          url: data.url,
+          url: data.url
         }
       }
 
@@ -271,24 +270,24 @@ class RedditService {
           subreddit: data.subreddit_name_prefixed,
           permalink,
           thumbnail,
-          url: data.link_url,
+          url: data.link_url
         }
       }
 
-      savedPosts.push(newPost);
+      savedPosts.push(newPost)
     }
 
-    return savedPosts;
+    return savedPosts
   }
 
   /**
    * Find a good thumbnail for a bookmark
    */
   getPostThumbnail = (post: RedditPost): string => {
-    const data = post.data;
-    const preview = post.data.preview;
+    const data = post.data
+    const preview = post.data.preview
 
-    let thumbnail: string;
+    let thumbnail: string
 
     if (post.kind === 't3') {
       if (
@@ -297,51 +296,51 @@ class RedditService {
         preview.images[0].resolutions.length > 2
       ) {
         // The resolution index is the middle level of compression
-        const resolutionIndex = Math.round(preview.images[0].resolutions.length / 2);
-        thumbnail = preview.images[0].resolutions[resolutionIndex].url;
+        const resolutionIndex = Math.round(preview.images[0].resolutions.length / 2)
+        thumbnail = preview.images[0].resolutions[resolutionIndex].url
       } else {
-        thumbnail = preview?.images[0].source.url || data.link_url;
+        thumbnail = preview?.images[0].source.url || data.link_url
       }
     }
 
     if (post.kind === 't1') {
       if (data.link_url?.endsWith('.jpg') || data.link_url?.endsWith('.png')) {
-        thumbnail = data.link_url;
+        thumbnail = data.link_url
       }
     }
 
-    return thumbnail;
+    return thumbnail
   }
 
   getExcerpt = (description: string): string => {
-    if (!description) return;
-    const limit = 140;
-    const lastWordIndex = description.lastIndexOf(' ', limit);
-    return `${description.substr(0, lastWordIndex)}...`;
+    if (!description) return
+    const limit = 140
+    const lastWordIndex = description.lastIndexOf(' ', limit)
+    return `${description.substr(0, lastWordIndex)}...`
   }
 
   /**
    * Unsave a bookmark from Reddit
    */
   unsavePost = async (id: string) => {
-    const token = await this._getToken();
+    const token = await this._getToken()
 
-    const url = `https://oauth.reddit.com/api/unsave`;
+    const url = 'https://oauth.reddit.com/api/unsave'
 
     const response = await fetch(url, {
       method: 'POST',
       headers: {
-        'Authorization': `bearer ${token.access_token}`,
+        Authorization: `bearer ${token.access_token}`,
         'User-Agent': this.USER_AGENT,
         'Content-Type': 'application/x-www-form-urlencoded'
       },
       body: `id=${id}`
     })
 
-    const result = await response.json();
+    const result = await response.json()
 
-    if (result.error) throw result;
-    return true;
+    if (result.error) throw result
+    return true
   }
 
   /**
@@ -357,7 +356,7 @@ class RedditService {
       this.STORAGE_REDDIT_PINNED_BOOKMARKS
     ])
   }
-  
+
   /**
    * Construct the OAuth URL
    * Used variables :
@@ -369,11 +368,11 @@ class RedditService {
     return (
       'https://www.reddit.com/api/v1/authorize.compact' +
       `?client_id=${this.CLIENT_ID}` +
-      `&response_type=code` +
+      '&response_type=code' +
       `&state=${state}` +
       `&redirect_uri=${encodeURIComponent(this.REDIRECT_URL)}` +
-      `&duration=permanent` +
-      `&scope=${encodeURIComponent(`history identity save`)}`
+      '&duration=permanent' +
+      `&scope=${encodeURIComponent('history identity save')}`
     )
   }
 
@@ -382,24 +381,24 @@ class RedditService {
    * Store the username
    */
   _fetchUserInfo = async (): Promise<string> => {
-    const token = await this._getToken();
+    const token = await this._getToken()
 
-    const url = `https://oauth.reddit.com/api/v1/me/`
+    const url = 'https://oauth.reddit.com/api/v1/me/'
 
     const response = await fetch(url, {
       headers: {
-        'Authorization': `bearer ${token.access_token}`,
+        Authorization: `bearer ${token.access_token}`,
         'User-Agent': this.USER_AGENT
       }
     })
 
-    const data = await response.json();
+    const data = await response.json()
 
-    await AsyncStorage.setItem(this.STORAGE_REDDIT_USERNAME, data.name);
+    await AsyncStorage.setItem(this.STORAGE_REDDIT_USERNAME, data.name)
 
     await AsyncStorage.getItem(this.STORAGE_REDDIT_USERNAME)
 
-    return data.name;
+    return data.name
   }
 
   /**
@@ -410,25 +409,25 @@ class RedditService {
    */
   _createToken = async (code: string): Promise<RedditToken> => {
     const url = (
-      `https://www.reddit.com/api/v1/access_token` +
-      `?grant_type=authorization_code` +
+      'https://www.reddit.com/api/v1/access_token' +
+      '?grant_type=authorization_code' +
       `&code=${code}` +
       `&client_id=${this.CLIENT_ID}` +
       `&redirect_uri=${encodeURIComponent(this.REDIRECT_URL)}`
-    );
+    )
 
     const token: RedditToken = await (await fetch(url, {
       method: 'POST',
       headers: {
         Authorization: `Basic ${this.BEARER_TOKEN}`,
         'User-Agent': this.USER_AGENT
-      },
-    })).json();
+      }
+    })).json()
 
     await AsyncStorage.setItem(
       this.STORAGE_REDDIT_REFRESH_TOKEN,
       token.refresh_token
-    );
+    )
 
     return {
       access_token: token.access_token,
@@ -443,14 +442,14 @@ class RedditService {
    * Get the token object from AsyncStorage
    */
   _getToken = async (): Promise<RedditToken> => {
-    if (this.token) return this.token;
+    if (this.token) return this.token
 
-    const localToken = await AsyncStorage.getItem(this.STORAGE_REDDIT_TOKEN);
+    const localToken = await AsyncStorage.getItem(this.STORAGE_REDDIT_TOKEN)
 
-    if (!localToken) return null;
-    
-    const token = JSON.parse(localToken);
-    return token;
+    if (!localToken) return null
+
+    const token = JSON.parse(localToken)
+    return token
   }
 
   /**
@@ -458,8 +457,8 @@ class RedditService {
    * Set the token in the AsyncStorage
    */
   _setToken = async (token) => {
-    this.token = token;
-    await AsyncStorage.setItem(this.STORAGE_REDDIT_TOKEN, JSON.stringify(token));
+    this.token = token
+    await AsyncStorage.setItem(this.STORAGE_REDDIT_TOKEN, JSON.stringify(token))
   }
 
   /**
@@ -467,9 +466,9 @@ class RedditService {
    * A token expires every hour
    */
   _refreshToken = async () => {
-    const refresh_token = await AsyncStorage.getItem(this.STORAGE_REDDIT_REFRESH_TOKEN);
-    
-    const url = 'https://www.reddit.com/api/v1/access_token';
+    const refresh_token = await AsyncStorage.getItem(this.STORAGE_REDDIT_REFRESH_TOKEN)
+
+    const url = 'https://www.reddit.com/api/v1/access_token'
 
     const response = await fetch(url, {
       method: 'POST',
@@ -477,31 +476,30 @@ class RedditService {
         Authorization: `Basic ${this.BEARER_TOKEN}`,
         'Content-Type': 'application/x-www-form-urlencoded'
       },
-      body: `grant_type=refresh_token` + 
+      body: 'grant_type=refresh_token' +
             `&refresh_token=${refresh_token}`
     })
 
-    const data = await response.json();
-    
-    if (data.error || !data) throw data;
+    const data = await response.json()
+
+    if (data.error || !data) throw data
 
     const newToken = {
       ...data,
       token_date: Date.now()
     }
 
-    this._setToken(newToken);
+    this._setToken(newToken)
 
-    return newToken;
+    return newToken
   }
 
   _getUsername = async () => {
-    if (this.username) return this.username;
-    const username = await AsyncStorage.getItem(this.STORAGE_REDDIT_USERNAME);
-    this.username = username;
-    return username;
+    if (this.username) return this.username
+    const username = await AsyncStorage.getItem(this.STORAGE_REDDIT_USERNAME)
+    this.username = username
+    return username
   }
-
 }
 
-export default new RedditService();
+export default new RedditService()

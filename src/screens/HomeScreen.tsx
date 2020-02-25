@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { SafeAreaView, View, StyleSheet, FlatList, BackHandler } from 'react-native';
-import { TouchableRipple, Searchbar } from 'react-native-paper';
-import { createStackNavigator } from '@react-navigation/stack';
-import { useBookmarks } from '../providers/BookmarksProvider';
-import Wrapper from '../components/Layout/Wrapper';
-import Title from '../components/Title';
-import NoBookmark from '../components/Bookmark/NoBookmark';
-import BookmarkDetails from '../components/Bookmark/BookmarkDetails';
-import { Feather } from '@expo/vector-icons';
-import Bookmark from '../components/Bookmark';
+import React, { useState, useEffect } from 'react'
+import { SafeAreaView, View, StyleSheet, FlatList, BackHandler } from 'react-native'
+import { TouchableRipple, Searchbar } from 'react-native-paper'
+import { createStackNavigator } from '@react-navigation/stack'
+import { useBookmarks } from '../providers/BookmarksProvider'
+import Wrapper from '../components/Layout/Wrapper'
+import Title from '../components/Title'
+import NoBookmark from '../components/Bookmark/NoBookmark'
+import BookmarkDetails from '../components/Bookmark/BookmarkDetails'
+import { Feather } from '@expo/vector-icons'
+import Bookmark from '../components/Bookmark'
 
-const HomeStack = createStackNavigator();
+const HomeStack = createStackNavigator()
 
-function HomeScreen() {
+function HomeScreen () {
   return (
     <HomeStack.Navigator initialRouteName="Bookmarks" headerMode="none">
       <HomeStack.Screen
@@ -28,34 +28,35 @@ function HomeScreen() {
   )
 }
 
-function Bookmarks() {
-  const { status, bookmarks, refetch, isUpdatingBookmarks } = useBookmarks();
-  const [isSearching, setIsSearching] = useState(false);
-  const [query, setQuery] = useState('');
-  const [filteredBookmarks, setFilteredBookmarks] = useState<BookmarkInterface[]>([]);
+function Bookmarks () {
+  const { status, bookmarks, refetch, isUpdatingBookmarks } = useBookmarks()
+  const [isSearching, setIsSearching] = useState(false)
+  const [query, setQuery] = useState('')
+  const [filteredBookmarks, setFilteredBookmarks] = useState<BookmarkInterface[]>([])
 
   useEffect(() => {
-    const filteredQuery = query.trim();
-    if (!filteredQuery) return setFilteredBookmarks([]);
+    const filteredQuery = query.trim()
+    if (!filteredQuery) return setFilteredBookmarks([])
 
     const filtered = bookmarks.filter(bookmark => {
-      if (bookmark.title?.includes(filteredQuery)) return true;
-      if (bookmark.subreddit?.includes(filteredQuery)) return true;
-      if (bookmark.description?.includes(filteredQuery)) return true;
+      if (bookmark.title?.includes(filteredQuery)) return true
+      if (bookmark.subreddit?.includes(filteredQuery)) return true
+      if (bookmark.description?.includes(filteredQuery)) return true
     })
 
-    setFilteredBookmarks(filtered);
-  }, [query]);
+    setFilteredBookmarks(filtered)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query])
 
   useEffect(() => {
     const handler = BackHandler.addEventListener('hardwareBackPress', () => {
-      if (!isSearching) return;
+      if (!isSearching) return
 
-      setIsSearching(false);
-      return true;
+      setIsSearching(false)
+      return true
     })
 
-    return () => handler.remove();
+    return () => handler.remove()
   }, [isSearching])
 
   return (
@@ -63,7 +64,7 @@ function Bookmarks() {
       <View style={styles.header}>
         <Title>Bookmarks</Title>
         <TouchableRipple
-          style={{ padding: 4 }}
+          style={styles.padding}
           onPress={() => setIsSearching(!isSearching)}
           borderless={true}
         >
@@ -84,7 +85,7 @@ function Bookmarks() {
       { status !== 'fulfilled' && (
         <NoBookmark />
       )}
-        
+
       { (status === 'fulfilled' && !isSearching) && (
         <SafeAreaView>
           <FlatList
@@ -117,6 +118,9 @@ function Bookmarks() {
 }
 
 const styles = StyleSheet.create({
+  padding: {
+    padding: 4
+  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -129,4 +133,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default HomeScreen;
+export default HomeScreen

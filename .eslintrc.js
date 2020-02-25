@@ -10,7 +10,8 @@ module.exports = {
   globals: {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly',
-    alert: 'readonly'
+    alert: 'readonly',
+    fetch: 'readonly'
   },
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -27,6 +28,7 @@ module.exports = {
     '@typescript-eslint'
   ],
   rules: {
+    'camelcase': 'off',
     'react-native/no-unused-styles': 'error',
     'react-native/split-platform-components': 'error',
     'react-native/no-inline-styles': 'error',

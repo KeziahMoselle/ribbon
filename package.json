@@ -50,7 +50,7 @@
     "eslint-plugin-standard": "^4.0.1",
     "jest-expo": "~36.0.1",
     "react-devtools": "^3",
-    "typescript": "~3.6.3"
+    "typescript": "~3.8.2"
   },
   "jest": {
     "preset": "react-native"
