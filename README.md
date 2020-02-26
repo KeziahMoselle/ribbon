@@ -6,11 +6,13 @@ This is an application which aim to help you complete reading your bookmarks.
 
 ## Preview
 
-<img width="400" src="./.github/demo.gif" alt="preview">
+<p>
+  <img width="250" src="./.github/demo.gif" alt="preview">
 
-<img width="400" src="./.github/homescreen.png" alt="preview">
+  <img width="250" src="./.github/homescreen.png" alt="preview">
 
-<img width="400" src="./.github/pinnedscreen.png" alt="preview">
+  <img width="250" src="./.github/pinnedscreen.png" alt="preview">
+</p>
 
 ## Features
 
