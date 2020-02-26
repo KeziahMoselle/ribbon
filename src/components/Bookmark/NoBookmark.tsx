@@ -30,7 +30,7 @@ function NoBookmark () {
       <View style={styles.card}>
         <Image
           style={styles.illustration}
-          source={require('../../assets/empty.png')}
+          source={require('../../../assets/empty.png')}
         />
         <Title style={styles.title}>No Bookmarks yet !</Title>
       </View>

@@ -33,7 +33,7 @@ function NoBookmark () {
       <View style={styles.card}>
         <Image
           style={styles.illustration}
-          source={require('../../assets/bulb.png')}
+          source={require('../../../assets/bulb.png')}
         />
         <Title style={styles.title}>No Pinned Bookmarks</Title>
         <Paragraph>

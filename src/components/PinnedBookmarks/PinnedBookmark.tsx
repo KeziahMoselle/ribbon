@@ -38,8 +38,8 @@ function Bookmark ({
       leftPress={handleUnpinClick}
       rightPress={unsaveBookmark}
     >
-      <View style={[styles.container, styles.padding]}>
-        <View style={styles.header}>
+      <View style={[styles.container, !thumbnail && styles.padding]}>
+        <View style={[styles.header, thumbnail && styles.padding]}>
           <Title>{ subreddit }</Title>
           <Caption>{ date } ago</Caption>
         </View>
