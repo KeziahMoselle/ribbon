@@ -24,13 +24,13 @@ This is an application which aim to help you complete reading your bookmarks.
 
 The goal is to centralize all bookmarks from different services but unfortunately it's not that easy since they did not provide an easy/legal way to do so.
 
-Supported services :
+✔️ Supported services :
 - Reddit (Saved)
 
-Ideas :
+💡 Ideas :
 - GitHub (Stars)
 
-Not possible :
+❌ Not possible :
 - Twitter (Bookmark) **API endpoint closed**
 - YouTube (Watch later) **API endpoint closed**
 
@@ -64,3 +64,9 @@ REDDIT_USERNAME=yourRedditUsername
 - And your redirect URI should be like : `https://auth.expo.io/@yourusername/appname`
 
 ![clientId](https://i.imgur.com/4ilPYUg.png)
+
+4. Launch the app
+
+```sh
+$ yarn start
+```
